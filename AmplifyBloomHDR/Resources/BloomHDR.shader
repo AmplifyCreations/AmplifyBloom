@@ -14,6 +14,7 @@ Shader "Hidden/AmplifyBloomHDR"
 
 			#define USING_HDRP
 			#include "../../AmplifyBloom/Resources/BloomLib.cginc"
+			#include "../../AmplifyBloom/Resources/BloomSRPTools.hlsl"
 
 		ENDHLSL
 
@@ -54,7 +55,7 @@ Shader "Hidden/AmplifyBloomHDR"
 			{
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX (input);
 				uint2 positionSS = input.texcoord * _ScreenSize.xy;
-				float4 c1 = LOAD_TEXTURE2D_X (_MainTex, positionSS);
+				float4 c1 = ASESampleTex(_MainTex, positionSS);
 				
 				return c1 * _Color;
 			}

@@ -24,7 +24,7 @@ Shader "Hidden/AmplifyBloom"
 		#include "BloomLib.cginc"
 		#pragma multi_compile __ AB_HIGH_PRECISION
 
-		uniform float4		_MainTex_TexelSize;// x - 1/width y - 1/height z- width w - height
+		uniform float4 _MainTex_TexelSize;// x - 1/width y - 1/height z- width w - height
 
 		struct v2f_img_custom
 		{

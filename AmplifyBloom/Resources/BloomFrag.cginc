@@ -5,6 +5,8 @@
 #define AMPLIFY_BLOOMFRAG_INCLUDED
 
 #include "UnityCG.cginc"
+#include "BloomSRPTools.hlsl"
+
 #ifndef UNITY_DECLARE_DEPTH_TEXTURE
 #define UNITY_DECLARE_DEPTH_TEXTURE(tex) sampler2D_float tex
 #endif
@@ -26,7 +28,7 @@ uniform half4 _BokehParams;
 
 half4 frag_decode ( v2f_img input ) : SV_Target
 {
-	return half4( DecodeColor ( tex2D ( _MainTex, input.uv ) ),1 );
+	return half4( DecodeColor ( ASESampleTex ( _MainTex, input.uv ) ),1 );
 }
 
 half4 frag_threshold ( v2f_img input ) : SV_Target
@@ -44,7 +46,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 	const half bleedingBias = 0.02;
 	const half bleedingMult = 30;
 
-	half4 centerPixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ));
+	half4 centerPixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ));
 	half centerDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) );
 
 	half centerPixelWeight = CalculateBokehWeight ( centerDepth, _BokehParams.x, _BokehParams.y, _BokehParams.z, _ProjectionParams.z, _BokehParams.w );
@@ -59,7 +61,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 
 	//0
 	sampleCoords = input.uv + _AnamorphicGlareWeights0.xy*centerPixelWeight;
-	samplePixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ));
+	samplePixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ));
 	sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
 	weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
 	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
@@ -68,7 +70,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 	totalWeight += weight;
 	//1
 	sampleCoords = input.uv + _AnamorphicGlareWeights1.xy*centerPixelWeight;
-	samplePixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
+	samplePixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
 	sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
 	weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
 	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
@@ -77,7 +79,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 	totalWeight += weight;
 	//2
 	sampleCoords = input.uv + _AnamorphicGlareWeights2.xy*centerPixelWeight;
-	samplePixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
+	samplePixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
 	sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
 	weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
 	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
@@ -86,7 +88,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 	totalWeight += weight;
 	//3
 	sampleCoords = input.uv + _AnamorphicGlareWeights3.xy*centerPixelWeight;
-	samplePixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
+	samplePixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
 	sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
 	weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
 	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
@@ -95,7 +97,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 	totalWeight += weight;
 	//4
 	sampleCoords = input.uv + _AnamorphicGlareWeights4.xy*centerPixelWeight;
-	samplePixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
+	samplePixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
 	sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
 	weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
 	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
@@ -104,7 +106,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 	totalWeight += weight;
 	//5
 	sampleCoords = input.uv + _AnamorphicGlareWeights5.xy*centerPixelWeight;
-	samplePixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
+	samplePixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
 	sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
 	weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
 	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
@@ -113,7 +115,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 	totalWeight += weight;
 	//6
 	sampleCoords = input.uv + _AnamorphicGlareWeights6.xy*centerPixelWeight;
-	samplePixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
+	samplePixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
 	sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
 	weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
 	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
@@ -122,7 +124,7 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 	totalWeight += weight;
 	//7
 	sampleCoords = input.uv + _AnamorphicGlareWeights7.xy*centerPixelWeight;
-	samplePixel = tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
+	samplePixel = ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( sampleCoords, _MainTex_ST ) );
 	sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
 	weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
 	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
@@ -136,84 +138,84 @@ half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 
 half4 frag_BokehComposition2S ( v2f_img input ) : SV_Target
 {
-	return min ( tex2D ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	return min ( ASESampleTex ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 }
 
 half4 frag_BokehComposition3S ( v2f_img input ) : SV_Target
 {
-	half4 colorMinA = min ( tex2D ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	return min ( colorMinA,tex2D ( _AnamorphicRTS1, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	half4 colorMinA = min ( ASESampleTex ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	return min ( colorMinA,ASESampleTex ( _AnamorphicRTS1, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 }
 
 half4 frag_BokehComposition4S ( v2f_img input ) : SV_Target
 {
-	half4 colorMin = min ( tex2D ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS1, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS2, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	half4 colorMin = min ( ASESampleTex ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS1, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS2, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return colorMin;
 }
 
 half4 frag_BokehComposition5S ( v2f_img input ) : SV_Target
 {
-	half4 colorMin = min ( tex2D ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS1, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS2, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS3, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	half4 colorMin = min ( ASESampleTex ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS1, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS2, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS3, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return colorMin;
 }
 
 half4 frag_BokehComposition6S ( v2f_img input ) : SV_Target
 {
-	half4 colorMin = min ( tex2D ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS1, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS2, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS3, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	colorMin = min ( colorMin, tex2D ( _AnamorphicRTS4, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	half4 colorMin = min ( ASESampleTex ( _MainTex,UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) , ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS1, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS2, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS3, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	colorMin = min ( colorMin, ASESampleTex ( _AnamorphicRTS4, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return colorMin;
 }
 
 half4 frag_weightedAddPS1 ( v2f_img input ) : SV_Target
 {
 	half3 vColor = half3( 0,0,0 );
-	vColor += _AnamorphicGlareWeights0 * DecodeColor ( tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights0 * DecodeColor ( ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return EncodeColor ( vColor );
 }
 
 half4 frag_weightedAddPS2 ( v2f_img input ) : SV_Target
 {
 	half3 vColor = half3( 0,0,0 );
-	vColor += _AnamorphicGlareWeights0 * DecodeColor ( tex2D ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights1 * DecodeColor ( tex2D ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights0 * DecodeColor ( ASESampleTex ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights1 * DecodeColor ( ASESampleTex ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return EncodeColor ( vColor );
 }
 
 half4 frag_weightedAddPS3 ( v2f_img input ) : SV_Target
 {
 	half3 vColor = half3( 0,0,0 );
-	vColor += _AnamorphicGlareWeights0 * DecodeColor ( tex2D ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights1 * DecodeColor ( tex2D ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights2 * DecodeColor ( tex2D ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights0 * DecodeColor ( ASESampleTex ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights1 * DecodeColor ( ASESampleTex ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights2 * DecodeColor ( ASESampleTex ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return EncodeColor ( vColor );
 }
 
 half4 frag_weightedAddPS4 ( v2f_img input ) : SV_Target
 {
 	half3 vColor = half3( 0,0,0 );
-	vColor += _AnamorphicGlareWeights0 * DecodeColor ( tex2D ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights1 * DecodeColor ( tex2D ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights2 * DecodeColor ( tex2D ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights3 * DecodeColor ( tex2D ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights0 * DecodeColor ( ASESampleTex ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights1 * DecodeColor ( ASESampleTex ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights2 * DecodeColor ( ASESampleTex ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights3 * DecodeColor ( ASESampleTex ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return EncodeColor ( vColor );
 }
 
 half4 frag_weightedAddPS5 ( v2f_img input ) : SV_Target
 {
 	half3 vColor = half3( 0,0,0 );
-	vColor += _AnamorphicGlareWeights0 * DecodeColor ( tex2D ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights1 * DecodeColor ( tex2D ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights2 * DecodeColor ( tex2D ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights3 * DecodeColor ( tex2D ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights4 * DecodeColor ( tex2D ( _AnamorphicRTS4,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights0 * DecodeColor ( ASESampleTex ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights1 * DecodeColor ( ASESampleTex ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights2 * DecodeColor ( ASESampleTex ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights3 * DecodeColor ( ASESampleTex ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights4 * DecodeColor ( ASESampleTex ( _AnamorphicRTS4,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return EncodeColor ( vColor );
 }
 
@@ -221,39 +223,39 @@ half4 frag_weightedAddPS6 ( v2f_img input ) : SV_Target
 {
 
 	half3 vColor = half3( 0,0,0 );
-	vColor += _AnamorphicGlareWeights0 * DecodeColor ( tex2D ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights1 * DecodeColor ( tex2D ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights2 * DecodeColor ( tex2D ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights3 * DecodeColor ( tex2D ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights4 * DecodeColor ( tex2D ( _AnamorphicRTS4,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights5 * DecodeColor ( tex2D ( _AnamorphicRTS5,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights0 * DecodeColor ( ASESampleTex ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights1 * DecodeColor ( ASESampleTex ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights2 * DecodeColor ( ASESampleTex ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights3 * DecodeColor ( ASESampleTex ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights4 * DecodeColor ( ASESampleTex ( _AnamorphicRTS4,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights5 * DecodeColor ( ASESampleTex ( _AnamorphicRTS5,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return EncodeColor ( vColor );
 }
 
 half4 frag_weightedAddPS7 ( v2f_img input ) : SV_Target
 {
 	half3 vColor = half3( 0,0,0 );
-	vColor += _AnamorphicGlareWeights0 * DecodeColor ( tex2D ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights1 * DecodeColor ( tex2D ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights2 * DecodeColor ( tex2D ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights3 * DecodeColor ( tex2D ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights4 * DecodeColor ( tex2D ( _AnamorphicRTS4,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights5 * DecodeColor ( tex2D ( _AnamorphicRTS5,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights6 * DecodeColor ( tex2D ( _AnamorphicRTS6,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights0 * DecodeColor ( ASESampleTex ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights1 * DecodeColor ( ASESampleTex ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights2 * DecodeColor ( ASESampleTex ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights3 * DecodeColor ( ASESampleTex ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights4 * DecodeColor ( ASESampleTex ( _AnamorphicRTS4,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights5 * DecodeColor ( ASESampleTex ( _AnamorphicRTS5,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights6 * DecodeColor ( ASESampleTex ( _AnamorphicRTS6,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return EncodeColor ( vColor );
 }
 
 half4 frag_weightedAddPS8 ( v2f_img input ) : SV_Target
 {
 	half3 vColor = half3( 0,0,0 );
-	vColor += _AnamorphicGlareWeights0 * DecodeColor ( tex2D ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights1 * DecodeColor ( tex2D ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights2 * DecodeColor ( tex2D ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights3 * DecodeColor ( tex2D ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights4 * DecodeColor ( tex2D ( _AnamorphicRTS4,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights5 * DecodeColor ( tex2D ( _AnamorphicRTS5,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights6 * DecodeColor ( tex2D ( _AnamorphicRTS6,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
-	vColor += _AnamorphicGlareWeights7 * DecodeColor ( tex2D ( _AnamorphicRTS7,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights0 * DecodeColor ( ASESampleTex ( _AnamorphicRTS0,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights1 * DecodeColor ( ASESampleTex ( _AnamorphicRTS1,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights2 * DecodeColor ( ASESampleTex ( _AnamorphicRTS2,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights3 * DecodeColor ( ASESampleTex ( _AnamorphicRTS3,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights4 * DecodeColor ( ASESampleTex ( _AnamorphicRTS4,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights5 * DecodeColor ( ASESampleTex ( _AnamorphicRTS5,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights6 * DecodeColor ( ASESampleTex ( _AnamorphicRTS6,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	vColor += _AnamorphicGlareWeights7 * DecodeColor ( ASESampleTex ( _AnamorphicRTS7,  UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 	return EncodeColor ( vColor );
 }
 
@@ -305,14 +307,14 @@ half4 frag_downsampler_without_karis ( v2f_img input ) : SV_Target
 half4 frag_downsampler_temp_filter_with_karis ( v2f_img input ) : SV_Target
 {
 	half4 currentColor = DownsampleWithKaris ( input.uv, _MainTex_TexelSize.xy, _MainTex );
-	half4 prevColor = tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) );
+	half4 prevColor = ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) );
 	return lerp ( currentColor, prevColor, _TempFilterValue );
 }
 
 half4 frag_downsampler_temp_filter_without_karis ( v2f_img input ) : SV_Target
 {
 	half4 currentColor = DownsampleWithoutKaris ( input.uv, _MainTex_TexelSize.xy, _MainTex );
-	half4 prevColor = tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) );
+	half4 prevColor = ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) );
 	return lerp ( currentColor, prevColor, _TempFilterValue );
 }
 
@@ -334,7 +336,7 @@ half4 frag_vertical_gaussian_blur ( v2f_img input ) : SV_Target
 half4 frag_vertical_gaussian_blur_temp_filter ( v2f_img input ) : SV_Target
 {
 	half4 currentColor = NineTapGaussian ( input.uv, _MainTex, float2( 0, _BlurRadius*_MainTex_TexelSize.y ) );
-	half4 prevColor = tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) );
+	half4 prevColor = ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) );
 	return lerp ( currentColor, prevColor, _TempFilterValue );
 }
 
@@ -350,7 +352,7 @@ half4 frag_upscaleTent ( v2f_img input ) : SV_Target
 
 half4 frag_add ( v2f_img input ) : SV_Target
 {
-	return ( tex2D ( _MainTex, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) + tex2D ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
+	return ( ASESampleTex ( _MainTex, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) + ASESampleTex ( _AnamorphicRTS0, UnityStereoScreenSpaceUVAdjust ( input.uv, _MainTex_ST ) ) );
 }
 
 #endif

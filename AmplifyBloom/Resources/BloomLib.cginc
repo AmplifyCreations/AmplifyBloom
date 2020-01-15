@@ -4,6 +4,8 @@
 #ifndef AMPLIFY_BLOOMLIB_INCLUDED
 #define AMPLIFY_BLOOMLIB_INCLUDED
 
+#include "BloomSRPTools.hlsl"
+
 uniform half4		_AnamorphicGlareWeights0;
 uniform half4		_AnamorphicGlareWeights1;
 uniform half4		_AnamorphicGlareWeights2;
@@ -103,7 +105,7 @@ inline half3 DecodeColor ( half4 enc )
 // THRESHOLD
 inline half4 CalcThreshold ( half threshold, float2 uv, sampler2D diffuseMap )
 {
-	half4 color = tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) );
+	half4 color = ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust( uv, _MainTex_ST ) );
 
 #ifdef AB_HIGH_PRECISION
 	return  max( color - threshold, 0 );
@@ -115,7 +117,7 @@ inline half4 CalcThreshold ( half threshold, float2 uv, sampler2D diffuseMap )
 
 inline half4 CalcThresholdWithMask ( half threshold, float2 uv, sampler2D diffuseMap, sampler2D maskMap )
 {
-	half4 color = tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) )*tex2D ( maskMap, uv );
+	half4 color = ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) )*ASESampleTex ( maskMap, uv );
 
 #ifdef AB_HIGH_PRECISION
 	return  max ( color - threshold, 0 );
@@ -137,9 +139,9 @@ inline half CalculateBokehWeight ( half depth, half aperture, half focalLength, 
 // CHROMATIC ABERRATION
 inline half3 CalcChromaticAberration ( sampler2D texMap, float2 uv, float2 dir, float3 distortion )
 {
-	return half3(	DecodeColor ( tex2D ( texMap,  UnityStereoScreenSpaceUVAdjust ( uv + dir * distortion.r, _MainTex_ST ) ) ).r,
-		DecodeColor ( tex2D ( texMap, UnityStereoScreenSpaceUVAdjust ( uv + dir * distortion.g, _MainTex_ST ) ) ).g,
-		DecodeColor ( tex2D ( texMap, UnityStereoScreenSpaceUVAdjust ( uv + dir * distortion.b, _MainTex_ST ) ) ).b );
+	return half3(	DecodeColor ( ASESampleTex ( texMap,  UnityStereoScreenSpaceUVAdjust ( uv + dir * distortion.r, _MainTex_ST ) ) ).r,
+		DecodeColor ( ASESampleTex ( texMap, UnityStereoScreenSpaceUVAdjust ( uv + dir * distortion.g, _MainTex_ST ) ) ).g,
+		DecodeColor ( ASESampleTex ( texMap, UnityStereoScreenSpaceUVAdjust ( uv + dir * distortion.b, _MainTex_ST ) ) ).b );
 }
 
 // PSEUDO - LENS FLARE
@@ -161,7 +163,7 @@ inline half4 CalcLensFlare ( const int ghostsAmount, float2 texelSize, float2 uv
 
 	float uvLen = length ( imageCenter - uv ) * invImageCenterLength;
 	float2 lutUV = float2( frac ( uvLen ), 0 );
-	half3 lutColor = tex2D( _LensFlareLUT, lutUV ).xyz;
+	half3 lutColor = ASESampleTex( _LensFlareLUT, lutUV ).xyz;
 
 	float2 chromaticDir = normalize ( ghostVec );
 	float3 chromaticDistVec = float3( -texelSize.x*_LensFlareGhostChrDistortion, 0.0, texelSize.x*_LensFlareGhostChrDistortion );
@@ -198,22 +200,22 @@ inline half4 AnamorphicGlareMat ( float2 uv, sampler2D diffuseMap )
 	{
 		//vecIdx 0
 		uvOffset = uv + _AnamorphicGlareOffsetsMat0[ 0 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat0[ 0 ].rgb*mainColor.rgb;
 
 		//vecIdx 1
 		uvOffset = uv + _AnamorphicGlareOffsetsMat0[ 1 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat0[ 1 ].rgb*mainColor.rgb;
 
 		//vecIdx 2
 		uvOffset = uv + _AnamorphicGlareOffsetsMat0[ 2 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat0[ 2 ].rgb*mainColor.rgb;
 
 		//vecIdx 3
 		uvOffset = uv + _AnamorphicGlareOffsetsMat0[ 3 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat0[ 3 ].rgb*mainColor.rgb;
 
 	}
@@ -222,22 +224,22 @@ inline half4 AnamorphicGlareMat ( float2 uv, sampler2D diffuseMap )
 	{
 		//vecIdx 0
 		uvOffset = uv + _AnamorphicGlareOffsetsMat1[ 0 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat1[ 0 ].rgb*mainColor.rgb;
 
 		//vecIdx 1
 		uvOffset = uv + _AnamorphicGlareOffsetsMat1[ 1 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat1[ 1 ].rgb*mainColor.rgb;
 
 		//vecIdx 2
 		uvOffset = uv + _AnamorphicGlareOffsetsMat1[ 2 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat1[ 2 ].rgb*mainColor.rgb;
 
 		//vecIdx 3
 		uvOffset = uv + _AnamorphicGlareOffsetsMat1[ 3 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat1[ 3 ].rgb*mainColor.rgb;
 	}
 
@@ -245,22 +247,22 @@ inline half4 AnamorphicGlareMat ( float2 uv, sampler2D diffuseMap )
 	{
 		//vecIdx 0
 		uvOffset = uv + _AnamorphicGlareOffsetsMat2[ 0 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat2[ 0 ].rgb*mainColor.rgb;
 
 		//vecIdx 1
 		uvOffset = uv + _AnamorphicGlareOffsetsMat2[ 1 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat2[ 1 ].rgb*mainColor.rgb;
 
 		//vecIdx 2
 		uvOffset = uv + _AnamorphicGlareOffsetsMat2[ 2 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat2[ 2 ].rgb*mainColor.rgb;
 
 		//vecIdx 3
 		uvOffset = uv + _AnamorphicGlareOffsetsMat2[ 3 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat2[ 3 ].rgb*mainColor.rgb;
 	}
 
@@ -268,22 +270,22 @@ inline half4 AnamorphicGlareMat ( float2 uv, sampler2D diffuseMap )
 	{
 		//vecIdx 0
 		uvOffset = uv + _AnamorphicGlareOffsetsMat3[ 0 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat3[ 0 ].rgb*mainColor.rgb;
 
 		//vecIdx 1
 		uvOffset = uv + _AnamorphicGlareOffsetsMat3[ 1 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat3[ 1 ].rgb*mainColor.rgb;
 
 		//vecIdx 2
 		uvOffset = uv + _AnamorphicGlareOffsetsMat3[ 2 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat3[ 2 ].rgb*mainColor.rgb;
 
 		//vecIdx 3
 		uvOffset = uv + _AnamorphicGlareOffsetsMat3[ 3 ].xy;
-		mainColor = DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
+		mainColor = DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uvOffset, _MainTex_ST ) ) );
 		finalColor.rgb += _AnamorphicGlareWeightsMat3[ 3 ].rgb*mainColor.rgb;
 	}
 
@@ -295,15 +297,15 @@ inline half4 AnamorphicGlareMat ( float2 uv, sampler2D diffuseMap )
 inline half4 NineTapGaussian ( float2 uv, sampler2D diffuseMap, float2 stride )
 {
 	half4 color = half4( 0, 0, 0, 0 );
-	color.rgb += DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) ) * 0.227027027;
+	color.rgb += DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) ) * 0.227027027;
 
 	float2 d1 = stride * 1.3846153846;
-	color.rgb += DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv + d1, _MainTex_ST )  ) ) * 0.3162162162;
-	color.rgb += DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv - d1, _MainTex_ST )  ) ) * 0.3162162162;
+	color.rgb += DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv + d1, _MainTex_ST )  ) ) * 0.3162162162;
+	color.rgb += DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv - d1, _MainTex_ST )  ) ) * 0.3162162162;
 
 	float2 d2 = stride * 3.2307692308;
-	color.rgb += DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv + d2, _MainTex_ST )  ) ) * 0.0702702703;
-	color.rgb += DecodeColor ( tex2D ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv - d2, _MainTex_ST )  ) ) * 0.0702702703;
+	color.rgb += DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv + d2, _MainTex_ST )  ) ) * 0.0702702703;
+	color.rgb += DecodeColor ( ASESampleTex ( diffuseMap, UnityStereoScreenSpaceUVAdjust ( uv - d2, _MainTex_ST )  ) ) * 0.0702702703;
 
 	return EncodeColor( color.rgb );
 }
@@ -343,7 +345,7 @@ inline half4 FirstPassUpscaleBlurTent ( sampler2D currentMipRT, float2 uvCoords,
 		for ( int i = 0; i < 9; i++ )
 		{
 			float2 uv = uvCoords + TexelOffsets[ i ] * oneOverTexSize * BlurRadius;
-			color.rgb += DecodeColor ( tex2D ( currentMipRT, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) ) * Weights[ i ];
+			color.rgb += DecodeColor ( ASESampleTex ( currentMipRT, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) ) * Weights[ i ];
 		}
 
 	return EncodeColor( color.rgb );
@@ -383,9 +385,9 @@ inline half4 UpscaleBlurTent ( sampler2D currentMipRT, sampler2D previousUpscale
 		for ( int i = 0; i < 9; i++ )
 		{
 			float2 uv = uvCoords + TexelOffsets[ i ] * oneOverTexSize * BlurRadius;
-			color.rgb += DecodeColor ( tex2D ( currentMipRT, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) ) * Weights[ i ];
+			color.rgb += DecodeColor ( ASESampleTex ( currentMipRT, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) ) * Weights[ i ];
 		}
-	color.rgb += DecodeColor ( tex2D ( previousUpscale, UnityStereoScreenSpaceUVAdjust ( uvCoords, _MainTex_ST ) ) );
+	color.rgb += DecodeColor ( ASESampleTex ( previousUpscale, UnityStereoScreenSpaceUVAdjust ( uvCoords, _MainTex_ST ) ) );
 
 	return EncodeColor( color.rgb );
 }
@@ -425,7 +427,7 @@ inline half4 DownsampleWithKaris ( float2 texcoord, float2 oneOverTextureSize, s
 		for ( int i = 0; i < NUM_SAMPLES; ++i )
 		{
 			float2 uv = texcoord + ( TexelOffsets[ i ] * oneOverTextureSize );
-			texels[ i ].rgb = DecodeColor ( tex2D ( DiffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) );
+			texels[ i ].rgb = DecodeColor ( ASESampleTex ( DiffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) );
 		}
 
 	redSum = ( texels[ 0 ] + texels[ 1 ] + texels[ 2 ] + texels[ 3 ] ) * 0.25;
@@ -480,7 +482,7 @@ inline half4 DownsampleWithoutKaris ( float2 texcoord, float2 oneOverTextureSize
 		for ( int i = 0; i < NUM_SAMPLES; ++i )
 		{
 			float2 uv = texcoord + ( TexelOffsets[ i ] * oneOverTextureSize );
-			texels[ i ].rgb = DecodeColor ( tex2D ( DiffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) );
+			texels[ i ].rgb = DecodeColor ( ASESampleTex ( DiffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) );
 		}
 
 	redSum = ( texels[ 0 ] + texels[ 1 ] + texels[ 2 ] + texels[ 3 ] ) * 0.25;
@@ -527,7 +529,7 @@ inline half4 DownsampleNoWeightedAvg ( float2 texcoord, float2 oneOverTextureSiz
 		for ( int i = 0; i < NUM_SAMPLES; ++i )
 		{
 			float2 uv = texcoord + ( TexelOffsets[ i ] * oneOverTextureSize );
-			texels[ i ].rgb = DecodeColor ( tex2D ( DiffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) );
+			texels[ i ].rgb = DecodeColor ( ASESampleTex ( DiffuseMap, UnityStereoScreenSpaceUVAdjust ( uv, _MainTex_ST ) ) );
 		}
 
 	redSum = ( texels[ 0 ] + texels[ 1 ] + texels[ 2 ] + texels[ 3 ] ) * 0.25;

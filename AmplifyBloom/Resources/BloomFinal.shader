@@ -25,6 +25,7 @@ Shader "Hidden/BloomFinal"
 
 		#include "UnityCG.cginc"
 		#include "BloomLib.cginc"
+		#include "BloomSRPTools.hlsl"
 		#pragma multi_compile __  AB_HIGH_PRECISION
 		uniform half4		_MainTex_TexelSize;// x - 1/width y - 1/height z- width w - height
 
@@ -106,11 +107,11 @@ Shader "Hidden/BloomFinal"
 		inline half3 CalculateStarburst ( half4 bloomColor, half2 uv ,half3 weightedStarburstColor )
 		{
 			half2 imageCenter = half2( 0.5, 0.5 );
-			half4 starburstColor = tex2D ( _LensStarburst, uv );
+			half4 starburstColor = ASESampleTex ( _LensStarburst, uv );
 			half2 starburstUV = uv - imageCenter;
 			starburstUV = mul ( _LensFlareStarMatrix, half4( starburstUV, 0, 1 ) ).xy;
 			starburstUV += imageCenter;
-			starburstColor += tex2D ( _LensStarburst, starburstUV );
+			starburstColor += ASESampleTex ( _LensStarburst, starburstUV );
 			bloomColor.rgb += weightedStarburstColor*starburstColor.rgb*_LensFlareStarburstStrength;
 			return bloomColor;
 		}
@@ -136,12 +137,12 @@ Shader "Hidden/BloomFinal"
 			half3 b4 = 0;
 			half3 b5 = 0;
 
-			b0 =  DecodeColor ( tex2D ( _MipResultsRTS0, input.stereoUV ) );
-			if ( count > 1 ) b1 = DecodeColor ( tex2D ( _MipResultsRTS1, input.stereoUV ) );
-			if ( count > 2 ) b2 = DecodeColor ( tex2D ( _MipResultsRTS2, input.stereoUV ) );
-			if ( count > 3 ) b3 = DecodeColor ( tex2D ( _MipResultsRTS3, input.stereoUV ) );
-			if ( count > 4 ) b4 = DecodeColor ( tex2D ( _MipResultsRTS4, input.stereoUV ) );
-			if ( count > 5 ) b5 = DecodeColor ( tex2D ( _MipResultsRTS5, input.stereoUV ) );
+			b0 =  DecodeColor ( ASESampleTex ( _MipResultsRTS0, input.stereoUV ) );
+			if ( count > 1 ) b1 = DecodeColor ( ASESampleTex ( _MipResultsRTS1, input.stereoUV ) );
+			if ( count > 2 ) b2 = DecodeColor ( ASESampleTex ( _MipResultsRTS2, input.stereoUV ) );
+			if ( count > 3 ) b3 = DecodeColor ( ASESampleTex ( _MipResultsRTS3, input.stereoUV ) );
+			if ( count > 4 ) b4 = DecodeColor ( ASESampleTex ( _MipResultsRTS4, input.stereoUV ) );
+			if ( count > 5 ) b5 = DecodeColor ( ASESampleTex ( _MipResultsRTS5, input.stereoUV ) );
 
 			upscaleColor = _UpscaleWeights0 * b0;
 			if ( count > 1 ) upscaleColor += _UpscaleWeights1 * b1;
@@ -170,26 +171,26 @@ Shader "Hidden/BloomFinal"
 				if ( count > 5 ) weightedStarburstColor += _LensStarburstWeights5 * b5;
 			}
 
-			half4 color = _SourceContribution*tex2D ( _MainTex, stereoUV );
+			half4 color = _SourceContribution*ASESampleTex ( _MainTex, stereoUV );
 			half4 originalUpscaleColor = half4( upscaleColor, 1 );
 			half4 bloomColor = _UpscaleContribution*originalUpscaleColor*_BloomParams.x;
 
 			if ( flare )
 			{
-				half4 lensFlareColor = tex2D ( _LensFlare, input.stereoUV );
+				half4 lensFlareColor = ASESampleTex ( _LensFlare, input.stereoUV );
 				bloomColor += lensFlareColor;
 				originalUpscaleColor += lensFlareColor;
 			}
 
 			if ( glare )
 			{
-				half4 lensGlareColor = tex2D ( _LensGlare, input.stereoUV );
+				half4 lensGlareColor = ASESampleTex ( _LensGlare, input.stereoUV );
 				bloomColor += lensGlareColor;
 				originalUpscaleColor += lensGlareColor;
 			}
 
 			if ( dirt )
-				bloomColor.rgb += weightedDirtColor*_LensDirtStrength*tex2D ( _LensDirt, input.uv ).rgb;
+				bloomColor.rgb += weightedDirtColor*_LensDirtStrength*ASESampleTex ( _LensDirt, input.uv ).rgb;
 
 			if ( starburst )
 				bloomColor.rgb = CalculateStarburst ( bloomColor, input.uv, weightedStarburstColor );
