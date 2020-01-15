@@ -3,16 +3,26 @@ Shader "Hidden/AmplifyBloomHDR"
     SubShader
     {
 		Cull Off ZWrite Off ZTest Always
-
-		Pass // Texture
-		{
-			HLSLPROGRAM
+		HLSLINCLUDE
+			#pragma target 3.0
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 
+			TEXTURE2D_X (_MainTex);
+			float4 _MainTex_TexelSize;// x - 1/width y - 1/height z- width w - height
+
+			#define USING_HDRP
+			#include "../../AmplifyBloom/Resources/BloomLib.cginc"
+
+		ENDHLSL
+
+		Pass
+		{
+			HLSLPROGRAM
+
 			#pragma vertex Vertex
-			#pragma fragment FragmentTexture
+			#pragma fragment Fragment
 
 			struct Attributes
 			{
@@ -27,7 +37,7 @@ Shader "Hidden/AmplifyBloomHDR"
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
-			TEXTURE2D_X (_InputTexture);
+			
 			float4 _Color;
 
 			Varyings Vertex (Attributes input)
@@ -40,11 +50,11 @@ Shader "Hidden/AmplifyBloomHDR"
 				return output;
 			}
 
-			float4 FragmentTexture (Varyings input) : SV_Target
+			float4 Fragment (Varyings input) : SV_Target
 			{
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX (input);
 				uint2 positionSS = input.texcoord * _ScreenSize.xy;
-				float4 c1 = LOAD_TEXTURE2D_X (_InputTexture, positionSS);
+				float4 c1 = LOAD_TEXTURE2D_X (_MainTex, positionSS);
 				
 				return c1 * _Color;
 			}

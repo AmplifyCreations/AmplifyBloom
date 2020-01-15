@@ -5,8 +5,6 @@
 #define AMPLIFY_BLOOMFRAG_INCLUDED
 
 #include "UnityCG.cginc"
-
-#include "UnityCG.cginc"
 #ifndef UNITY_DECLARE_DEPTH_TEXTURE
 #define UNITY_DECLARE_DEPTH_TEXTURE(tex) sampler2D_float tex
 #endif
@@ -26,7 +24,6 @@ uniform half		_LensFlareStarburstStrength;
 uniform half4 _BokehParams;
 
 
-
 half4 frag_decode ( v2f_img input ) : SV_Target
 {
 	return half4( DecodeColor ( tex2D ( _MainTex, input.uv ) ),1 );
@@ -41,36 +38,6 @@ half4 frag_thresholdMask ( v2f_img input ) : SV_Target
 {
 	return CalcThresholdWithMask ( _BloomParams.y,input.uv, _MainTex ,_MaskTex );
 }
-
-//
-//half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
-//{
-//	const half bleedingBias = 0.02;
-//const half bleedingMult = 30;
-//
-//half4 centerPixel = tex2D ( _MainTex, input.uv );
-//half centerDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, input.uv );
-//
-//half centerPixelWeight = CalculateBokehWeight ( centerDepth, _BokehParams.x, _BokehParams.y, _BokehParams.z, _ProjectionParams.z, _BokehParams.w );
-//
-//half4 color = half4( 0,0,0,0 );
-//half totalWeight = 0;
-//
-//UNITY_UNROLL
-//for ( int t = 0; t < 8; t++ )
-//{
-//	half2 sampleCoords = input.uv + _AnamorphicGlareWeights[ t ].xy*centerPixelWeight;
-//	half4 samplePixel = tex2D ( _MainTex, sampleCoords );
-//	half4 sampleDepth = SAMPLE_DEPTH_TEXTURE ( _CameraDepthTexture, sampleCoords );
-//	half weight = ( sampleDepth < centerDepth ) ? centerPixelWeight*bleedingMult : 1;
-//	weight = ( centerPixelWeight > ( samplePixel.a + bleedingBias ) ) ? weight : 1;
-//	weight = saturate ( weight );
-//	color += samplePixel * weight;
-//	totalWeight += weight;
-//}
-//return  color / totalWeight;
-//}
-
 
 half4 frag_BokehFiltering ( v2f_img input ) : SV_Target
 {

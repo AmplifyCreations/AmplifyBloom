@@ -31,7 +31,6 @@ namespace AmplifyBloom
 		{
 			int passID = 0;
 			_material.SetColor( ShaderIDs.Color, color.value );
-
 			_material.SetTexture( ShaderIDs.InputTexture, srcRT );
 			HDUtils.DrawFullScreen( cmd, _material, destRT, null, passID );
 		}
