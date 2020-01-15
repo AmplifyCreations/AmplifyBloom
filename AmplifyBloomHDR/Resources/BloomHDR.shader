@@ -1,58 +1,54 @@
-﻿Shader "Unlit/BloomHDR"
+Shader "Hidden/AmplifyBloomHDR"
 {
-    Properties
-    {
-        _MainTex ("Texture", 2D) = "white" {}
-    }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
+		Cull Off ZWrite Off ZTest Always
 
-        Pass
-        {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            // make fog work
-            #pragma multi_compile_fog
+		Pass // Texture
+		{
+			HLSLPROGRAM
+			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
+			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 
-            #include "UnityCG.cginc"
+			#pragma vertex Vertex
+			#pragma fragment FragmentTexture
 
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+			struct Attributes
+			{
+				uint vertexID : SV_VertexID;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
 
-            struct v2f
-            {
-                float2 uv : TEXCOORD0;
-                UNITY_FOG_COORDS(1)
-                float4 vertex : SV_POSITION;
-            };
+			struct Varyings
+			{
+				float4 positionCS : SV_POSITION;
+				float2 texcoord   : TEXCOORD0;
+				UNITY_VERTEX_OUTPUT_STEREO
+			};
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+			TEXTURE2D_X (_InputTexture);
+			float4 _Color;
 
-            v2f vert (appdata v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                UNITY_TRANSFER_FOG(o,o.vertex);
-                return o;
-            }
+			Varyings Vertex (Attributes input)
+			{
+				Varyings output;
+				UNITY_SETUP_INSTANCE_ID (input);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO (output);
+				output.positionCS = GetFullScreenTriangleVertexPosition (input.vertexID);
+				output.texcoord = GetFullScreenTriangleTexCoord (input.vertexID);
+				return output;
+			}
 
-            fixed4 frag (v2f i) : SV_Target
-            {
-                // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
-                return col;
-            }
-            ENDCG
-        }
+			float4 FragmentTexture (Varyings input) : SV_Target
+			{
+				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX (input);
+				uint2 positionSS = input.texcoord * _ScreenSize.xy;
+				float4 c1 = LOAD_TEXTURE2D_X (_InputTexture, positionSS);
+				
+				return c1 * _Color;
+			}
+			ENDHLSL
+		}
     }
 }
