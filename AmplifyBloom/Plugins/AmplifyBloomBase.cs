@@ -209,10 +209,6 @@ namespace AmplifyBloom
 
 		private bool silentError = false;
 
-#if TRIAL
-		private Texture2D watermark = null;
-#endif
-
 		void Awake()
 		{
 			bool nullDev = ( SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null );
@@ -287,11 +283,7 @@ namespace AmplifyBloom
 			m_camera = GetComponent<Camera>();
 			m_camera.depthTextureMode |= DepthTextureMode.Depth;
 			m_lensFlare.CreateLUTexture();
-
-#if TRIAL
-			watermark = new Texture2D( 4, 4 ) { hideFlags = HideFlags.HideAndDontSave };
-			watermark.LoadImage( AmplifyBloom.Watermark.ImageData );
-#endif
+			
 		}
 
 		void OnDestroy()
@@ -314,13 +306,6 @@ namespace AmplifyBloom
 				m_lensFlare = null;
 			}
 
-#if TRIAL
-			if ( watermark != null )
-			{
-				DestroyImmediate( watermark );
-				watermark = null;
-			}
-#endif
 		}
 
 		void ApplyGaussianBlur( RenderTexture renderTexture, int amount, float radius = 1.0f, bool applyTemporal = false )
@@ -1124,12 +1109,6 @@ namespace AmplifyBloom
 			get { return m_anamorphicGlare.ApplyLensGlare; }
 			set { m_anamorphicGlare.ApplyLensGlare = value; }
 		}
-#if TRIAL
-		void OnGUI()
-		{
-			if ( !silentError && watermark != null )
-				GUI.DrawTexture( new Rect( Screen.width - watermark.width - 15, Screen.height - watermark.height - 12, watermark.width, watermark.height ), watermark );
-		}
-#endif
+
 	}
 }

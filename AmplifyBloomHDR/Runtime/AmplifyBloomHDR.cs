@@ -29,48 +29,29 @@ namespace AmplifyBloom
 
 		
 		public override void Render( CommandBuffer cmd, HDCamera camera, RTHandle srcRT, RTHandle destRT )
-		{
-			//int passID = 0;
-			//_material.SetColor( ShaderIDs.Color, color.value );
-			//_material.SetTexture( ShaderIDs.InputTexture,srcRT );
+		{			
+			int nameId = Shader.PropertyToID( "_AB_SourceArrayToTexture" );
+			int nameId2 = Shader.PropertyToID( "_AB_BloomAuxBuffer" );
 
-			//cmd.SetGlobalTexture( ShaderIDs.InputTexture, srcRT );
-			//cmd.SetGlobalColor( ShaderIDs.Color, color.value );
-
-			int nameId = Shader.PropertyToID( "_NomeAleatorio" );
-			int nameId2 = Shader.PropertyToID( "_NomeAleatorio2" );
 			cmd.GetTemporaryRT( nameId, camera.actualWidth, camera.actualHeight, 0, FilterMode.Point, srcRT.rt.graphicsFormat );
 			cmd.GetTemporaryRT( nameId2, camera.actualWidth, camera.actualHeight, 0, FilterMode.Point, srcRT.rt.graphicsFormat );
 
-			//cmd.SetGlobalTexture( ShaderIDs.InputTexture, srcRT );
-			//cmd.Blit( srcRT, nameId);
-
-			//cmd.SetGlobalTexture( ShaderIDs.InputTexture, nameId );
-			//cmd.Blit( srcRT, destRT );
-
+			//Source render texture is a texture array which gives access to VR frame buffers into each slice
+			//We need to copy each one individually and apply bloom to it
 			cmd.CopyTexture( srcRT, 0, 0, nameId, 0, 0 );
 
+			//
 			cmd.SetGlobalTexture( ShaderIDs.InputTexture, nameId );
+			_material.SetColor( ShaderIDs.Color, color.value );
 			cmd.Blit( nameId, nameId2, _material, 0 );
 
 			//Bloom Code goes here
 
+			//Copying first result to first slice
 			cmd.CopyTexture( nameId2, 0, 0, destRT, 0, 0 );
-
-			//cmd.SetGlobalTexture( ShaderIDs.InputTexture, nameId );
-			//RTHandles.Alloc(
-			//HDUtils.DrawFullScreen( cmd, _material, nameId, null, 0 );
-			//
-			//cmd.SetGlobalTexture( ShaderIDs.InputTexture, nameId );
-			//HDUtils.DrawFullScreen( cmd, _material, destRT, null, 1 );
-
 
 			cmd.ReleaseTemporaryRT( nameId );
 			cmd.ReleaseTemporaryRT( nameId2 );
-
-			//cmd.SetGlobalTexture( ShaderIDs.InputTexture, nameId );
-			//HDUtils.DrawFullScreen( cmd, _material, destRT, null, 1 );
-			//HDUtils.DrawFullScreen( cmd, _material, destRT, null, 0 );
 
 		}
 
