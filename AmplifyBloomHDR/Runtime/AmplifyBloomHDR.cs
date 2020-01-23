@@ -16,6 +16,7 @@ namespace AmplifyBloom
 			internal static readonly int InputTexture = Shader.PropertyToID( "_MainTex" );
 		}
 
+
 		Material _material;
 
 		public bool IsActive() => _material != null ;
@@ -27,14 +28,13 @@ namespace AmplifyBloom
 			_material = CoreUtils.CreateEngineMaterial( "Hidden/AmplifyBloomHDR" );
 		}
 
-		
 		public override void Render( CommandBuffer cmd, HDCamera camera, RTHandle srcRT, RTHandle destRT )
-		{			
+		{
 			int nameId = Shader.PropertyToID( "_AB_SourceArrayToTexture" );
 			int nameId2 = Shader.PropertyToID( "_AB_BloomAuxBuffer" );
 
-			cmd.GetTemporaryRT( nameId, camera.actualWidth, camera.actualHeight, 0, FilterMode.Point, srcRT.rt.graphicsFormat );
-			cmd.GetTemporaryRT( nameId2, camera.actualWidth, camera.actualHeight, 0, FilterMode.Point, srcRT.rt.graphicsFormat );
+			cmd.GetTemporaryRT( nameId, destRT.rt.width, destRT.rt.height, 0, FilterMode.Point, srcRT.rt.graphicsFormat );
+			cmd.GetTemporaryRT( nameId2, destRT.rt.width, destRT.rt.height, 0, FilterMode.Point, srcRT.rt.graphicsFormat );
 
 			//Source render texture is a texture array which gives access to VR frame buffers into each slice
 			//We need to copy each one individually and apply bloom to it
