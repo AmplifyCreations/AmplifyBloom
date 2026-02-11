@@ -240,6 +240,10 @@ namespace AmplifyBloom
 			if ( m_temporalFilteringCurve == null )
 				m_temporalFilteringCurve = new AnimationCurve( new Keyframe( 0, 0 ), new Keyframe( 1, 0.999f ) );
 
+			if (m_bloomShader == null){
+				m_bloomShader = Shader.Find("Hidden/AmplifyBloom");
+			}
+
 			if ( m_bloomShader != null )
 			{
 				m_bloomMaterial = new Material( m_bloomShader );
@@ -249,6 +253,10 @@ namespace AmplifyBloom
 			{
 				AmplifyUtils.DebugLog( "Main Bloom shader not found", LogType.Error );
 				gameObject.SetActive( false );
+			}
+
+			if (m_finalCompositionShader == null){
+				m_finalCompositionShader = Shader.Find("Hidden/AmplifyBloomFinal");
 			}
 
 			if ( m_finalCompositionShader != null )
