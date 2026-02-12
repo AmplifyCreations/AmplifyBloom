@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace AmplifyBloom
 {
@@ -44,23 +45,12 @@ namespace AmplifyBloom
 		private const int PerPassSampleCount = 8;
 
 		//SERIALIZABLE VARIABLES
-		[SerializeField]
-		private bool m_isActive = false;
-
-		[SerializeField]
-		private bool m_applyOnBloomSource = false;
-
-		[SerializeField]
-		private float m_bokehSampleRadius = 0.5f;
-
-		[SerializeField]
-		private Vector4 m_bokehCameraProperties = new Vector4( 0.05f, 0.018f, 1.34f, 0.18f ); // x - aperture y - Focal Length z - Focal Distance w - Max CoC Diameter
-
-		[SerializeField]
-		private float m_offsetRotation = 0;
-
-		[SerializeField]
-		private ApertureShape m_apertureShape = ApertureShape.Hexagon;
+		[SerializeField] private bool m_isActive = false;
+		[SerializeField] private bool m_applyOnBloomSource = false;
+		[SerializeField] private float m_bokehSampleRadius = 0.5f;
+		[SerializeField] private Vector4 m_bokehCameraProperties = new Vector4( 0.05f, 0.018f, 1.34f, 0.18f ); // x: aperture, y: Focal Length, z: Focal Distance, w: Max CoC Diameter
+		[SerializeField] private float m_offsetRotation = 0;
+		[SerializeField] private ApertureShape m_apertureShape = ApertureShape.Hexagon;
 
 		private List<AmplifyBokehData> m_bokehOffsets;
 
@@ -169,12 +159,11 @@ namespace AmplifyBloom
 
 		public void OnBeforeSerialize()
 		{
-
 		}
 
 		public ApertureShape ApertureShape
 		{
-			get { return m_apertureShape; }
+			get => m_apertureShape;
 			set
 			{
 				if ( m_apertureShape != value )
@@ -187,57 +176,56 @@ namespace AmplifyBloom
 
 		public bool ApplyBokeh
 		{
-			get { return m_isActive; }
-			set { m_isActive = value; }
+			get => m_isActive;
+			set => m_isActive = value;
 		}
-
 
 		public bool ApplyOnBloomSource
 		{
-			get { return m_applyOnBloomSource; }
-			set { m_applyOnBloomSource = value; }
+			get => m_applyOnBloomSource;
+			set => m_applyOnBloomSource = value;
 		}
 
 		public float BokehSampleRadius
 		{
-			get { return m_bokehSampleRadius; }
-			set { m_bokehSampleRadius = value; }
+			get => m_bokehSampleRadius;
+			set => m_bokehSampleRadius = value;
 		}
 
 		public float OffsetRotation
 		{
-			get { return m_offsetRotation; }
-			set { m_offsetRotation = value; }
+			get => m_offsetRotation;
+			set => m_offsetRotation = value;
 		}
 
 		public Vector4 BokehCameraProperties
 		{
-			get { return m_bokehCameraProperties; }
-			set { m_bokehCameraProperties = value; }
+			get => m_bokehCameraProperties;
+			set => m_bokehCameraProperties = value;
 		}
 
 		public float Aperture
 		{
-			get { return m_bokehCameraProperties.x; }
-			set { m_bokehCameraProperties.x = value; }
+			get => m_bokehCameraProperties.x;
+			set => m_bokehCameraProperties.x = value;
 		}
 
 		public float FocalLength
 		{
-			get { return m_bokehCameraProperties.y; }
-			set { m_bokehCameraProperties.y = value; }
+			get => m_bokehCameraProperties.y;
+			set => m_bokehCameraProperties.y = value;
 		}
 
 		public float FocalDistance
 		{
-			get { return m_bokehCameraProperties.z; }
-			set { m_bokehCameraProperties.z = value; }
+			get => m_bokehCameraProperties.z;
+			set => m_bokehCameraProperties.z = value;
 		}
 
 		public float MaxCoCDiameter
 		{
-			get { return m_bokehCameraProperties.w; }
-			set { m_bokehCameraProperties.w = value; }
+			get => m_bokehCameraProperties.w;
+			set => m_bokehCameraProperties.w = value;
 		}
 	}
 }

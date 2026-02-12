@@ -77,7 +77,6 @@ namespace AmplifyBloom
 		Full = 0,
 		Half,
 		Quarter
-
 	}
 
 	[Serializable]
@@ -95,104 +94,39 @@ namespace AmplifyBloom
 		private const float MaxStarburstIntensity = 1;
 
 		// SERIALIZABLE VARIABLES
-
-		[SerializeField]
-		private Texture m_maskTexture = null;
-		[SerializeField]
-		private RenderTexture m_targetTexture = null;
-
-		[SerializeField]
-		private bool m_showDebugMessages = true;
-
-		[SerializeField]
-		private int m_softMaxdownscales = MaxDownscales;
-
-		[SerializeField]
-		private DebugToScreenEnum m_debugToScreen = DebugToScreenEnum.None;
-
-		[SerializeField]
-		private bool m_highPrecision = false;
-
-		[SerializeField]
-		private Vector4 m_bloomRange = new Vector4( 500, 1, 0, 0 );
-
-		[SerializeField]
-		private float m_overallThreshold = 0.53f;
-
-		[SerializeField]
-		private Vector4 m_bloomParams = new Vector4( 0.8f, 1, 1, 1 ); // x - overallIntensity, y - threshold, z - blur radius w - bloom scale
-
-		[SerializeField]
-		private bool m_temporalFilteringActive = false;
-
-		[SerializeField]
-		private float m_temporalFilteringValue = 0.05f;
-
-		[SerializeField]
-		private int m_bloomDownsampleCount = 6;
-
-		[SerializeField]
-		private AnimationCurve m_temporalFilteringCurve;
-
-		[SerializeField]
-		private bool m_separateFeaturesThreshold = false;
-
-		[SerializeField]
-		private float m_featuresThreshold = 0.05f;
-
-		[SerializeField]
-		private AmplifyLensFlare m_lensFlare = new AmplifyLensFlare();
-
-		[SerializeField]
-		private bool m_applyLensDirt = true;
-
-		[SerializeField]
-		private float m_lensDirtStrength = 2f;
-
-		[SerializeField]
-		private Texture m_lensDirtTexture;
-
-		[SerializeField]
-		private bool m_applyLensStardurst = true;
-
-		[SerializeField]
-		private Texture m_lensStardurstTex;
-
-		[SerializeField]
-		private float m_lensStarburstStrength = 2f;
-
-		[SerializeField]
-		private AmplifyGlare m_anamorphicGlare = new AmplifyGlare();
-
-		[SerializeField]
-		private AmplifyBokeh m_bokehFilter = new AmplifyBokeh();
-
-		[SerializeField]
-		private float[] m_upscaleWeights = new float[ MaxDownscales ] { 0.0842f, 0.1282f, 0.1648f, 0.2197f, 0.2197f, 0.1831f };
-
-		[SerializeField]
-		private float[] m_gaussianRadius = new float[ MaxDownscales ] { 1, 1, 1, 1, 1, 1 };
-
-		[SerializeField]
-		private int[] m_gaussianSteps = new int[ MaxDownscales ] { 1, 1, 1, 1, 1, 1 };
-
-		[SerializeField]
-		private float[] m_lensDirtWeights = new float[ MaxDownscales ] { 0.0670f, 0.1020f, 0.1311f, 0.1749f, 0.2332f, 0.3f };
-
-		[SerializeField]
-		private float[] m_lensStarburstWeights = new float[ MaxDownscales ] { 0.0670f, 0.1020f, 0.1311f, 0.1749f, 0.2332f, 0.3f };
-
-		[SerializeField]
-		private bool[] m_downscaleSettingsFoldout = new bool[ MaxDownscales ] { false, false, false, false, false, false };
-
-		[SerializeField]
-		private int m_featuresSourceId = 0;
-
-		[SerializeField]
-		private UpscaleQualityEnum m_upscaleQuality = UpscaleQualityEnum.Realistic;
-
-		[SerializeField]
-		private MainThresholdSizeEnum m_mainThresholdSize = MainThresholdSizeEnum.Full;
+		[SerializeField] private Texture m_maskTexture = null;
+		[SerializeField] private RenderTexture m_targetTexture = null;
+		[SerializeField] private bool m_showDebugMessages = true;
+		[SerializeField] private int m_softMaxdownscales = MaxDownscales;
+		[SerializeField] private DebugToScreenEnum m_debugToScreen = DebugToScreenEnum.None;
+		[SerializeField] private bool m_highPrecision = false;
+		[SerializeField] private Vector4 m_bloomRange = new Vector4( 500, 1, 0, 0 );
+		[SerializeField] private float m_overallThreshold = 0.53f;
+		[SerializeField] private Vector4 m_bloomParams = new Vector4( 0.8f, 1, 1, 1 ); // x: overallIntensity, y: threshold, z: blur radius, w: bloom scale
+		[SerializeField] private bool m_temporalFilteringActive = false;
+		[SerializeField] private float m_temporalFilteringValue = 0.05f;
+		[SerializeField] private int m_bloomDownsampleCount = 6;
+		[SerializeField] private AnimationCurve m_temporalFilteringCurve = new AnimationCurve( new Keyframe( 0, 0 ), new Keyframe( 1, 0.999f ) );
+		[SerializeField] private bool m_separateFeaturesThreshold = false;
+		[SerializeField] private float m_featuresThreshold = 0.05f;
+		[SerializeField] private AmplifyLensFlare m_lensFlare = new AmplifyLensFlare();
+		[SerializeField] private bool m_applyLensDirt = true;
+		[SerializeField] private float m_lensDirtStrength = 2f;
+		[SerializeField] private Texture m_lensDirtTexture;
+		[SerializeField] private bool m_applyLensStardurst = true;
+		[SerializeField] private Texture m_lensStardurstTex;
+		[SerializeField] private float m_lensStarburstStrength = 2f;
+		[SerializeField] private AmplifyGlare m_anamorphicGlare = new AmplifyGlare();
+		[SerializeField] private AmplifyBokeh m_bokehFilter = new AmplifyBokeh();
+		[SerializeField] private float[] m_upscaleWeights = new float[ MaxDownscales ] { 0.0842f, 0.1282f, 0.1648f, 0.2197f, 0.2197f, 0.1831f };
+		[SerializeField] private float[] m_gaussianRadius = new float[ MaxDownscales ] { 1, 1, 1, 1, 1, 1 };
+		[SerializeField] private int[] m_gaussianSteps = new int[ MaxDownscales ] { 1, 1, 1, 1, 1, 1 };
+		[SerializeField] private float[] m_lensDirtWeights = new float[ MaxDownscales ] { 0.0670f, 0.1020f, 0.1311f, 0.1749f, 0.2332f, 0.3f };
+		[SerializeField] private float[] m_lensStarburstWeights = new float[ MaxDownscales ] { 0.0670f, 0.1020f, 0.1311f, 0.1749f, 0.2332f, 0.3f };
+		[SerializeField] private bool[] m_downscaleSettingsFoldout = new bool[ MaxDownscales ] { false, false, false, false, false, false };
+		[SerializeField] private int m_featuresSourceId = 0;
+		[SerializeField] private UpscaleQualityEnum m_upscaleQuality = UpscaleQualityEnum.Realistic;
+		[SerializeField] private MainThresholdSizeEnum m_mainThresholdSize = MainThresholdSizeEnum.Full;
 
 		// Internal private variables
 		private Transform m_cameraTransform;
@@ -210,21 +144,19 @@ namespace AmplifyBloom
 		RenderTexture[] m_tempAuxDownsampleRTs = new RenderTexture[ MaxDownscales ];
 		Vector2[] m_tempDownsamplesSizes = new Vector2[ MaxDownscales ];
 
-		private bool silentError = false;
+		private bool m_silentError = false;
+		private bool m_initialized = false;
 
-		void Awake()
+		private void Initialize()
 		{
 			bool nullDev = ( SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null );
 			if ( nullDev )
 			{
 
 				AmplifyUtils.DebugLog( "Null graphics device detected. Skipping effect silently.", LogType.Error );
-				silentError = true;
+				m_silentError = true;
 				return;
 			}
-
-			if ( !AmplifyUtils.IsInitialized )
-				AmplifyUtils.InitializeIds();
 
 			m_anamorphicGlare.Init();
 			m_lensFlare.Init();
@@ -237,23 +169,19 @@ namespace AmplifyBloom
 			m_tempFilterBuffer = null;
 			m_starburstMat = Matrix4x4.identity;
 
-			if ( m_temporalFilteringCurve == null )
-				m_temporalFilteringCurve = new AnimationCurve( new Keyframe( 0, 0 ), new Keyframe( 1, 0.999f ) );
-
-			if ( m_bloomShader != null )
+			if ( m_bloomShader != null && m_bloomMaterial == null )
 			{
-				m_bloomMaterial = new Material( m_bloomShader );
-				m_bloomMaterial.hideFlags = HideFlags.DontSave;
+				m_bloomMaterial = new Material( m_bloomShader ) { hideFlags = HideFlags.DontSave };
 			}
 			else
 			{
 				AmplifyUtils.DebugLog( "Main Bloom shader not found", LogType.Error );
-				gameObject.SetActive( false );
 			}
 
-			if ( m_finalCompositionShader != null )
+			if ( m_finalCompositionShader != null && m_finalCompositionMaterial == null )
 			{
-				m_finalCompositionMaterial = new Material( m_finalCompositionShader );
+				m_finalCompositionMaterial = new Material( m_finalCompositionShader ) { hideFlags = HideFlags.DontSave };
+
 				if ( !m_finalCompositionMaterial.GetTag( AmplifyUtils.ShaderModeTag, false ).Equals( AmplifyUtils.ShaderModeValue ) )
 				{
 					if ( m_showDebugMessages )
@@ -264,30 +192,28 @@ namespace AmplifyBloom
 					m_softMaxdownscales = MaxDownscales;
 				}
 
-				m_finalCompositionMaterial.hideFlags = HideFlags.DontSave;
 				if ( m_lensDirtTexture == null )
 				{
-					m_lensDirtTexture = m_finalCompositionMaterial.GetTexture( AmplifyUtils.LensDirtRTId );
+					m_lensDirtTexture = Texture2D.blackTexture;
 				}
 
 				if ( m_lensStardurstTex == null )
 				{
-					m_lensStardurstTex = m_finalCompositionMaterial.GetTexture( AmplifyUtils.LensStarburstRTId );
+					m_lensStardurstTex = Texture2D.blackTexture;
 				}
 			}
 			else
 			{
 				AmplifyUtils.DebugLog( "Bloom Composition shader not found", LogType.Error );
-				gameObject.SetActive( false );
 			}
 
 			m_camera = GetComponent<Camera>();
-			m_camera.depthTextureMode |= DepthTextureMode.Depth;
-			m_lensFlare.CreateLUTexture();
+			m_lensFlare.TextureFromGradient();
 
+			m_initialized = true;
 		}
 
-		void OnDestroy()
+		private void OnDestroy()
 		{
 			if ( m_bokehFilter != null )
 			{
@@ -320,10 +246,12 @@ namespace AmplifyBloom
 			}
 		}
 
-		void ApplyGaussianBlur( RenderTexture renderTexture, int amount, float radius = 1.0f, bool applyTemporal = false )
+		private void ApplyGaussianBlur( RenderTexture renderTexture, int amount, float radius = 1.0f, bool applyTemporal = false )
 		{
 			if ( amount == 0 )
+			{
 				return;
+			}
 
 			m_bloomMaterial.SetFloat( AmplifyUtils.BlurRadiusId, radius );
 			RenderTexture blurRT = AmplifyUtils.GetTempRenderTarget( renderTexture.width, renderTexture.height );
@@ -380,7 +308,7 @@ namespace AmplifyBloom
 			AmplifyUtils.ReleaseTempRenderTarget( blurRT );
 		}
 
-		void CreateTempFilterRT( RenderTexture source )
+		private void CreateTempFilterRT( RenderTexture source )
 		{
 			if ( m_tempFilterBuffer != null )
 			{
@@ -393,7 +321,7 @@ namespace AmplifyBloom
 			m_tempFilterBuffer.Create();
 		}
 
-		void CleanTempFilterRT()
+		private void CleanTempFilterRT()
 		{
 			if ( m_tempFilterBuffer != null )
 			{
@@ -406,11 +334,26 @@ namespace AmplifyBloom
 
 		public void RenderImage( RenderTexture src, RenderTexture dest )
 		{
-			if ( silentError )
+			if ( m_silentError )
+			{
+				Graphics.Blit( src, dest );
 				return;
+			}
+
+			if ( !m_initialized )
+			{
+				Initialize();
+			}
 
 			if ( !AmplifyUtils.IsInitialized )
+			{
 				AmplifyUtils.InitializeIds();
+			}
+
+			if ( m_bokehFilter.ApplyBokeh )
+			{
+				m_camera.depthTextureMode |= DepthTextureMode.Depth;
+			}
 
 			if ( m_highPrecision )
 			{
@@ -428,7 +371,6 @@ namespace AmplifyBloom
 			float totalCamRot = Mathf.Acos( Vector3.Dot( m_cameraTransform.right, Vector3.right ) );
 			if ( Vector3.Cross( m_cameraTransform.right, Vector3.right ).y > 0 )
 				totalCamRot = -totalCamRot;
-
 
 			RenderTexture lensFlareRT = null;
 			RenderTexture lensGlareRT = null;
@@ -481,7 +423,6 @@ namespace AmplifyBloom
 				int tempH = thresholdRT.height;
 				for ( int i = 0; i < m_bloomDownsampleCount; i++ )
 				{
-
 					m_tempDownsamplesSizes[ i ].x = tempW;
 					m_tempDownsamplesSizes[ i ].y = tempH;
 					tempW = ( tempW + 1 ) >> 1;
@@ -673,7 +614,6 @@ namespace AmplifyBloom
 			}
 
 			//UPSAMPLE
-
 			if ( m_bloomDownsampleCount > 0 )
 			{
 				if ( m_bloomDownsampleCount == 1 )
@@ -691,7 +631,6 @@ namespace AmplifyBloom
 				}
 				else
 				{
-
 					if ( m_upscaleQuality == UpscaleQualityEnum.Realistic )
 					{
 						ApplyUpscale();
@@ -798,7 +737,7 @@ namespace AmplifyBloom
 		}
 
 
-		void FinalComposition( float srcContribution, float upscaleContribution, RenderTexture src, RenderTexture dest, int forcePassId )
+		private void FinalComposition( float srcContribution, float upscaleContribution, RenderTexture src, RenderTexture dest, int forcePassId )
 		{
 			m_finalCompositionMaterial.SetFloat( AmplifyUtils.SourceContributionId, srcContribution );
 			m_finalCompositionMaterial.SetFloat( AmplifyUtils.UpscaleContributionId, upscaleContribution );
@@ -810,12 +749,12 @@ namespace AmplifyBloom
 			}
 			else
 			{
-				if ( LensFlareInstance.ApplyLensFlare )
+				if ( LensFlare.ApplyLensFlare )
 				{
 					passCount = passCount | 8;
 				}
 
-				if ( LensGlareInstance.ApplyLensGlare )
+				if ( LensGlare.ApplyLensGlare )
 				{
 					passCount = passCount | 4;
 				}
@@ -835,7 +774,7 @@ namespace AmplifyBloom
 			AmplifyUtils.ReleaseAllRT();
 		}
 
-		void ApplyUpscale()
+		private void ApplyUpscale()
 		{
 			int beginIdx = ( m_bloomDownsampleCount - 1 );
 			int upscaleIdx = 0;
@@ -855,78 +794,55 @@ namespace AmplifyBloom
 			}
 		}
 
-		public AmplifyGlare LensGlareInstance
-		{
-			get { return m_anamorphicGlare; }
-		}
-
-		public AmplifyBokeh BokehFilterInstance
-		{
-			get { return m_bokehFilter; }
-		}
-
-		public AmplifyLensFlare LensFlareInstance
-		{
-			get { return m_lensFlare; }
-		}
+		public AmplifyGlare LensGlare => m_anamorphicGlare;
+		public AmplifyBokeh BokehFilter => m_bokehFilter;
+		public AmplifyLensFlare LensFlare => m_lensFlare;
 
 		public bool ApplyLensDirt
 		{
-			get { return m_applyLensDirt; }
-			set { m_applyLensDirt = value; }
+			get => m_applyLensDirt;
+			set => m_applyLensDirt = value;
 		}
 
 		public float LensDirtStrength
 		{
-			get { return m_lensDirtStrength; }
-			set
-			{
-				m_lensDirtStrength = value < 0 ? 0 : value;
-			}
+			get => m_lensDirtStrength;
+			set => m_lensDirtStrength = Mathf.Max( 0f, value );
 		}
 
 		public Texture LensDirtTexture
 		{
-			get { return m_lensDirtTexture; }
-			set { m_lensDirtTexture = value; }
+			get => m_lensDirtTexture;
+			set => m_lensDirtTexture = value;
 		}
 
 		public bool ApplyLensStardurst
 		{
-			get { return m_applyLensStardurst; }
-			set { m_applyLensStardurst = value; }
+			get => m_applyLensStardurst;
+			set => m_applyLensStardurst = value;
 		}
 
 		public Texture LensStardurstTex
 		{
-			get { return m_lensStardurstTex; }
-			set { m_lensStardurstTex = value; }
+			get => m_lensStardurstTex;
+			set => m_lensStardurstTex = value;
 		}
 
 		public float LensStarburstStrength
 		{
-			get { return m_lensStarburstStrength; }
-			set { m_lensStarburstStrength = value < 0 ? 0 : value; }
+			get => m_lensStarburstStrength;
+			set => m_lensStarburstStrength = Mathf.Max( 0f, value );
 		}
 
 		public PrecisionModes CurrentPrecisionMode
 		{
-			get
-			{
-				if ( m_highPrecision )
-					return PrecisionModes.High;
-
-				return PrecisionModes.Low;
-			}
-			set
-			{
-				HighPrecision = value == PrecisionModes.High;
-			}
+			get => m_highPrecision ? PrecisionModes.High : PrecisionModes.Low;
+			set => HighPrecision = ( value == PrecisionModes.High );
 		}
 
 		public bool HighPrecision
 		{
-			get { return m_highPrecision; }
+			get => m_highPrecision;
 			set
 			{
 				if ( m_highPrecision != value )
@@ -939,55 +855,43 @@ namespace AmplifyBloom
 
 		public float BloomRange
 		{
-			get { return m_bloomRange.x; }
-			set
-			{
-				m_bloomRange.x = value < 0 ? 0 : value;
-			}
+			get => m_bloomRange.x;
+			set => m_bloomRange.x = Mathf.Max( 0f, value );
 		}
 
 		public float OverallThreshold
 		{
-			get { return m_overallThreshold; }
-			set
-			{
-				m_overallThreshold = value < 0 ? 0 : value;
-			}
+			get => m_overallThreshold;
+			set => m_overallThreshold = Mathf.Max( 0f, value );
 		}
 
 		public Vector4 BloomParams
 		{
-			get { return m_bloomParams; }
-			set { m_bloomParams = value; }
+			get => m_bloomParams;
+			set => m_bloomParams = value;
 		}
 
 		public float OverallIntensity
 		{
-			get { return m_bloomParams.x; }
-			set
-			{
-				m_bloomParams.x = value < 0 ? 0 : value;
-			}
+			get => m_bloomParams.x;
+			set => m_bloomParams.x = Mathf.Max( 0f, value );
 		}
 
 		public float BloomScale
 		{
-			get { return m_bloomParams.w; }
-			set
-			{
-				m_bloomParams.w = value < 0 ? 0 : value;
-			}
+			get => m_bloomParams.w;
+			set => m_bloomParams.w = Mathf.Max( 0f, value );
 		}
 
 		public float UpscaleBlurRadius
 		{
-			get { return m_bloomParams.z; }
-			set { m_bloomParams.z = value; }
+			get => m_bloomParams.z;
+			set => m_bloomParams.z = value;
 		}
 
 		public bool TemporalFilteringActive
 		{
-			get { return m_temporalFilteringActive; }
+			get => m_temporalFilteringActive;
 			set
 			{
 				if ( m_temporalFilteringActive != value )
@@ -1000,128 +904,101 @@ namespace AmplifyBloom
 
 		public float TemporalFilteringValue
 		{
-			get { return m_temporalFilteringValue; }
-			set { m_temporalFilteringValue = value; }
+			get => m_temporalFilteringValue;
+			set => m_temporalFilteringValue = value;
 		}
 
-		public int SoftMaxdownscales
-		{
-			get { return m_softMaxdownscales; }
-		}
+		public int SoftMaxdownscales => m_softMaxdownscales;
+
 		public int BloomDownsampleCount
 		{
-			get { return m_bloomDownsampleCount; }
-			set { m_bloomDownsampleCount = Mathf.Clamp( value, MinDownscales, m_softMaxdownscales ); }
+			get => m_bloomDownsampleCount;
+			set => m_bloomDownsampleCount = Mathf.Clamp( value, MinDownscales, m_softMaxdownscales );
 		}
 
 		public int FeaturesSourceId
 		{
-			get { return m_featuresSourceId; }
-			set { m_featuresSourceId = Mathf.Clamp( value, 0, m_bloomDownsampleCount - 1 ); }
+			get => m_featuresSourceId;
+			set => m_featuresSourceId = Mathf.Clamp( value, 0, m_bloomDownsampleCount - 1 );
 		}
 
-		public bool[] DownscaleSettingsFoldout
-		{
-			get { return m_downscaleSettingsFoldout; }
-		}
-
-		public float[] UpscaleWeights
-		{
-			get { return m_upscaleWeights; }
-		}
-
-		public float[] LensDirtWeights
-		{
-			get { return m_lensDirtWeights; }
-		}
-
-		public float[] LensStarburstWeights
-		{
-			get { return m_lensStarburstWeights; }
-		}
-
-		public float[] GaussianRadius
-		{
-			get { return m_gaussianRadius; }
-		}
-
-		public int[] GaussianSteps
-		{
-			get { return m_gaussianSteps; }
-		}
+		public bool[] DownscaleSettingsFoldout => m_downscaleSettingsFoldout;
+		public float[] UpscaleWeights => m_upscaleWeights;
+		public float[] LensDirtWeights => m_lensDirtWeights;
+		public float[] LensStarburstWeights => m_lensStarburstWeights;
+		public float[] GaussianRadius => m_gaussianRadius;
+		public int[] GaussianSteps => m_gaussianSteps;
 
 		public AnimationCurve TemporalFilteringCurve
 		{
-			get { return m_temporalFilteringCurve; }
-			set { m_temporalFilteringCurve = value; }
+			get => m_temporalFilteringCurve;
+			set => m_temporalFilteringCurve = value;
 		}
 
 		public bool SeparateFeaturesThreshold
 		{
-			get { return m_separateFeaturesThreshold; }
-			set { m_separateFeaturesThreshold = value; }
+			get => m_separateFeaturesThreshold;
+			set => m_separateFeaturesThreshold = value;
 		}
 
 		public float FeaturesThreshold
 		{
-			get { return m_featuresThreshold; }
-			set { m_featuresThreshold = value < 0 ? 0 : value; }
+			get => m_featuresThreshold;
+			set => m_featuresThreshold = Mathf.Max( 0f, value );
 		}
 
 		public DebugToScreenEnum DebugToScreen
 		{
-			get { return m_debugToScreen; }
-			set { m_debugToScreen = value; }
+			get => m_debugToScreen;
+			set => m_debugToScreen = value;
 		}
 
 		public UpscaleQualityEnum UpscaleQuality
 		{
-			get { return m_upscaleQuality; }
-			set { m_upscaleQuality = value; }
+			get => m_upscaleQuality;
+			set => m_upscaleQuality = value;
 		}
 
 		public bool ShowDebugMessages
 		{
-			get { return m_showDebugMessages; }
-			set { m_showDebugMessages = value; }
+			get => m_showDebugMessages;
+			set => m_showDebugMessages = value;
 		}
 
 		public MainThresholdSizeEnum MainThresholdSize
 		{
-			get { return m_mainThresholdSize; }
-			set { m_mainThresholdSize = value; }
+			get => m_mainThresholdSize;
+			set => m_mainThresholdSize = value;
 		}
 
 		public RenderTexture TargetTexture
 		{
-			get { return m_targetTexture; }
-			set { m_targetTexture = value; }
+			get => m_targetTexture;
+			set => m_targetTexture = value;
 		}
 
 		public Texture MaskTexture
 		{
-			get { return m_maskTexture; }
-			set { m_maskTexture = value; }
+			get => m_maskTexture;
+			set => m_maskTexture = value;
 		}
 
 		public bool ApplyBokehFilter
 		{
-			get { return m_bokehFilter.ApplyBokeh; }
-			set { m_bokehFilter.ApplyBokeh = value; }
+			get => m_bokehFilter.ApplyBokeh;
+			set => m_bokehFilter.ApplyBokeh = value;
 		}
 
 		public bool ApplyLensFlare
 		{
-			get { return m_lensFlare.ApplyLensFlare; }
-			set { m_lensFlare.ApplyLensFlare = value; }
+			get => m_lensFlare.ApplyLensFlare;
+			set => m_lensFlare.ApplyLensFlare = value;
 		}
 
 		public bool ApplyLensGlare
 		{
-			get { return m_anamorphicGlare.ApplyLensGlare; }
-			set { m_anamorphicGlare.ApplyLensGlare = value; }
+			get => m_anamorphicGlare.ApplyLensGlare;
+			set => m_anamorphicGlare.ApplyLensGlare = value;
 		}
-
 	}
 }
-

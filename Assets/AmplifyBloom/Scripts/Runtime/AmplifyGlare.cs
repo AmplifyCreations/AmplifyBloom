@@ -1,12 +1,12 @@
 // Amplify Bloom - Advanced Bloom Post-Effect for Unity
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
-using UnityEngine;
 using System;
+using UnityEngine;
+using UnityEngine.Rendering;
+
 namespace AmplifyBloom
 {
-
-
 	// Glare form library
 	public enum GlareLibType
 	{
@@ -26,14 +26,11 @@ namespace AmplifyBloom
 	public class GlareDefData
 	{
 		public bool FoldoutValue = true;
-		[SerializeField]
-		private StarLibType m_starType = StarLibType.Cross;
-		[SerializeField]
-		private float m_starInclination = 0;
-		[SerializeField]
-		private float m_chromaticAberration = 0;
-		[SerializeField]
-		private StarDefData m_customStarData = null;
+
+		[SerializeField] private StarLibType m_starType = StarLibType.Cross;
+		[SerializeField] private float m_starInclination = 0;
+		[SerializeField] private float m_chromaticAberration = 0;
+		[SerializeField] private StarDefData m_customStarData = null;
 
 		public GlareDefData()
 		{
@@ -172,18 +169,14 @@ namespace AmplifyBloom
 		private float m_overallStreakScale = 1f;
 
 		private bool m_isDirty = true;
-		private RenderTexture[] _rtBuffer;
+		private RenderTexture[] m_rtBuffer;
 
 		public AmplifyGlare()
 		{
 			m_currentGlareIdx = ( int ) m_currentGlareType;
+			m_cromaticAberrationGrad = new Gradient();
 
-			m_cromaticAberrationGrad = new UnityEngine.Gradient();
-
-
-
-
-			_rtBuffer = new RenderTexture[ MaxStarLines * MaxPasses ];
+			m_rtBuffer = new RenderTexture[ MaxStarLines * MaxPasses ];
 
 			m_weigthsMat = new Matrix4x4[ 4 ];
 			m_offsetsMat = new Matrix4x4[ 4 ];
@@ -193,23 +186,26 @@ namespace AmplifyBloom
 			m_whiteReference = new Color( 0.63f, 0.63f, 0.63f, 0.0f );
 			m_aTanFoV = Mathf.Atan( Mathf.PI / MaxLineSamples );
 
-
-			m_starDefArr = new StarDefData[] {  new StarDefData(StarLibType.Cross,       "Cross",        2,      4,      1.0f,   0.85f,  0.0f,   0.5f,   -1.0f,      90.0f),
-												new StarDefData(StarLibType.Cross_Filter,"CrossFilter",  2,      4,      1.0f,   0.95f,  0.0f,   0.5f,   -1.0f,      90.0f),
-												new StarDefData(StarLibType.Snow_Cross,  "snowCross",    3,      4,      1.0f,   0.96f,  0.349f, 0.5f,   -1.0f,      -1),
-												new StarDefData(StarLibType.Vertical,    "Vertical",     1,      4,      1.0f,   0.96f,  0.0f,   0.0f,   -1.0f,      -1),
-												new StarDefData(StarLibType.Sunny_Cross, "SunnyCross",   4,      4,      1.0f,   0.88f,  0.0f,   0.0f,   0.95f,      45.0f)
+			m_starDefArr = new StarDefData[]
+			{
+				new StarDefData( StarLibType.Cross,        "Cross",       2, 4, 1.0f, 0.85f, 0.000f, 0.5f, -1.00f, 90.0f ),
+				new StarDefData( StarLibType.Cross_Filter, "CrossFilter", 2, 4, 1.0f, 0.95f, 0.000f, 0.5f, -1.00f, 90.0f ),
+				new StarDefData( StarLibType.Snow_Cross,   "snowCross",   3, 4, 1.0f, 0.96f, 0.349f, 0.5f, -1.00f, -1.0f ),
+				new StarDefData( StarLibType.Vertical,     "Vertical",    1, 4, 1.0f, 0.96f, 0.000f, 0.0f, -1.00f, -1.0f ),
+				new StarDefData( StarLibType.Sunny_Cross,  "SunnyCross",  4, 4, 1.0f, 0.88f, 0.000f, 0.0f,  0.95f, 45.0f )
 			};
 
-			m_glareDefArr = new GlareDefData[] {    new GlareDefData( StarLibType.Cross,        0.00f,  0.5f),//Cheap Lens
-													new GlareDefData( StarLibType.Cross_Filter, 0.44f,  0.5f),//Cross Screen
-													new GlareDefData( StarLibType.Cross_Filter, 1.22f,  1.5f),//Cross Screen Spectral
-													new GlareDefData( StarLibType.Snow_Cross,   0.17f,  0.5f),//Snow Cross
-													new GlareDefData( StarLibType.Snow_Cross,   0.70f,  1.5f),//Snow Cross Spectral
-													new GlareDefData( StarLibType.Sunny_Cross,  0.00f,  0.5f),//Sunny Cross
-													new GlareDefData( StarLibType.Sunny_Cross,  0.79f,  1.5f),//Sunny Cross Spectral
-													new GlareDefData( StarLibType.Vertical,     1.57f,  0.5f),//Vertical Slits
-													new GlareDefData( StarLibType.Vertical,     0.00f,  0.5f) //Horizontal slits
+			m_glareDefArr = new GlareDefData[]
+			{
+				new GlareDefData( StarLibType.Cross,        0.00f,  0.5f ), // Cheap Lens
+				new GlareDefData( StarLibType.Cross_Filter, 0.44f,  0.5f ), // Cross Screen
+				new GlareDefData( StarLibType.Cross_Filter, 1.22f,  1.5f ), // Cross Screen Spectral
+				new GlareDefData( StarLibType.Snow_Cross,   0.17f,  0.5f ), // Snow Cross
+				new GlareDefData( StarLibType.Snow_Cross,   0.70f,  1.5f ), // Snow Cross Spectral
+				new GlareDefData( StarLibType.Sunny_Cross,  0.00f,  0.5f ), // Sunny Cross
+				new GlareDefData( StarLibType.Sunny_Cross,  0.79f,  1.5f ), // Sunny Cross Spectral
+				new GlareDefData( StarLibType.Vertical,     1.57f,  0.5f ), // Vertical Slits
+				new GlareDefData( StarLibType.Vertical,     0.00f,  0.5f )  // Horizontal slits
 			};
 		}
 
@@ -217,18 +213,22 @@ namespace AmplifyBloom
 		{
 			if( m_cromaticAberrationGrad.alphaKeys.Length == 0 && m_cromaticAberrationGrad.colorKeys.Length == 0 )
 			{
-				UnityEngine.GradientColorKey[] colorKeys = new UnityEngine.GradientColorKey[] { new UnityEngine.GradientColorKey(Color.white,0f),
-																							new UnityEngine.GradientColorKey(Color.blue,0.25f),
-																							new UnityEngine.GradientColorKey(Color.green,0.5f),
-																							new UnityEngine.GradientColorKey(Color.yellow,0.75f),
-																							new UnityEngine.GradientColorKey(Color.red,1f)
-																};
-				UnityEngine.GradientAlphaKey[] alphaKeys = new UnityEngine.GradientAlphaKey[] { new UnityEngine.GradientAlphaKey(1f,0f),
-																							new UnityEngine.GradientAlphaKey(1f,0.25f),
-																							new UnityEngine.GradientAlphaKey(1f,0.5f),
-																							new UnityEngine.GradientAlphaKey(1f,0.75f),
-																							new UnityEngine.GradientAlphaKey(1f,1f)
-																};
+				GradientColorKey[] colorKeys = new GradientColorKey[]
+				{
+					new UnityEngine.GradientColorKey( Color.white,  0.00f ),
+					new UnityEngine.GradientColorKey( Color.blue,   0.25f ),
+					new UnityEngine.GradientColorKey( Color.green,  0.50f ),
+					new UnityEngine.GradientColorKey( Color.yellow, 0.75f ),
+					new UnityEngine.GradientColorKey( Color.red,    1.00f )
+				};
+				GradientAlphaKey[] alphaKeys = new GradientAlphaKey[]
+				{
+					new UnityEngine.GradientAlphaKey( 1f, 0.00f ),
+					new UnityEngine.GradientAlphaKey( 1f, 0.25f ),
+					new UnityEngine.GradientAlphaKey( 1f, 0.50f ),
+					new UnityEngine.GradientAlphaKey( 1f, 0.75f ),
+					new UnityEngine.GradientAlphaKey( 1f, 1.00f )
+				};
 				m_cromaticAberrationGrad.SetKeys( colorKeys, alphaKeys );
 			}
 		}
@@ -244,15 +244,15 @@ namespace AmplifyBloom
 			m_weigthsMat = null;
 			m_offsetsMat = null;
 
-			for ( int i = 0; i < _rtBuffer.Length; i++ )
+			for ( int i = 0; i < m_rtBuffer.Length; i++ )
 			{
-				if ( _rtBuffer[ i ] != null )
+				if ( m_rtBuffer[ i ] != null )
 				{
-					AmplifyUtils.ReleaseTempRenderTarget( _rtBuffer[ i ] );
-					_rtBuffer[ i ] = null;
+					AmplifyUtils.ReleaseTempRenderTarget( m_rtBuffer[ i ] );
+					m_rtBuffer[ i ] = null;
 				}
 			}
-			_rtBuffer = null;
+			m_rtBuffer = null;
 
 			m_amplifyGlareCache.Destroy();
 			m_amplifyGlareCache = null;
@@ -268,7 +268,7 @@ namespace AmplifyBloom
 			// ALLOCATE RENDER TEXTURES
 			for ( int i = 0; i < m_amplifyGlareCache.TotalRT; i++ )
 			{
-				_rtBuffer[ i ] = AmplifyUtils.GetTempRenderTarget( source.width, source.height );
+				m_rtBuffer[ i ] = AmplifyUtils.GetTempRenderTarget( source.width, source.height );
 			}
 
 			int rtIdx = 0;
@@ -282,11 +282,11 @@ namespace AmplifyBloom
 					//CREATED WEIGHTED TEXTURE
 					if ( p == 0 )
 					{
-						Graphics.Blit( source, _rtBuffer[ rtIdx ], material, ( int ) BloomPasses.AnamorphicGlare );
+						Graphics.Blit( source, m_rtBuffer[ rtIdx ], material, ( int ) BloomPasses.AnamorphicGlare );
 					}
 					else
 					{
-						Graphics.Blit( _rtBuffer[ rtIdx - 1 ], _rtBuffer[ rtIdx ], material, ( int ) BloomPasses.AnamorphicGlare );
+						Graphics.Blit( m_rtBuffer[ rtIdx - 1 ], m_rtBuffer[ rtIdx ], material, ( int ) BloomPasses.AnamorphicGlare );
 					}
 					rtIdx += 1;
 				}
@@ -297,19 +297,19 @@ namespace AmplifyBloom
 			{
 				material.SetVector( AmplifyUtils.AnamorphicGlareWeightsStr[ i ], m_amplifyGlareCache.AverageWeight );
 				int idx = ( i + 1 ) * m_amplifyGlareCache.CurrentPassCount - 1;
-				material.SetTexture( AmplifyUtils.AnamorphicRTS[ i ], _rtBuffer[ idx ] );
+				material.SetTexture( AmplifyUtils.AnamorphicRTS[ i ], m_rtBuffer[ idx ] );
 			}
 
 
 			int passId = ( int ) BloomPasses.WeightedAddPS1 + m_amplifyGlareCache.StarDef.StarlinesCount - 1;
 			dest.DiscardContents();
-			Graphics.Blit( _rtBuffer[ 0 ], dest, material, passId );
+			Graphics.Blit( m_rtBuffer[ 0 ], dest, material, passId );
 
 			//RELEASE RT's
-			for ( rtIdx = 0; rtIdx < _rtBuffer.Length; rtIdx++ )
+			for ( rtIdx = 0; rtIdx < m_rtBuffer.Length; rtIdx++ )
 			{
-				AmplifyUtils.ReleaseTempRenderTarget( _rtBuffer[ rtIdx ] );
-				_rtBuffer[ rtIdx ] = null;
+				AmplifyUtils.ReleaseTempRenderTarget( m_rtBuffer[ rtIdx ] );
+				m_rtBuffer[ rtIdx ] = null;
 			}
 		}
 
@@ -403,7 +403,7 @@ namespace AmplifyBloom
 
 			for ( int i = 0; i < m_amplifyGlareCache.TotalRT; i++ )
 			{
-				_rtBuffer[ i ] = AmplifyUtils.GetTempRenderTarget( source.width, source.height );
+				m_rtBuffer[ i ] = AmplifyUtils.GetTempRenderTarget( source.width, source.height );
 			}
 
 			int rtIdx = 0;
@@ -452,11 +452,11 @@ namespace AmplifyBloom
 					//CREATED WEIGHTED TEXTURE
 					if ( p == 0 )
 					{
-						Graphics.Blit( source, _rtBuffer[ rtIdx ], material, ( int ) BloomPasses.AnamorphicGlare );
+						Graphics.Blit( source, m_rtBuffer[ rtIdx ], material, ( int ) BloomPasses.AnamorphicGlare );
 					}
 					else
 					{
-						Graphics.Blit( _rtBuffer[ rtIdx - 1 ], _rtBuffer[ rtIdx ], material, ( int ) BloomPasses.AnamorphicGlare );
+						Graphics.Blit( m_rtBuffer[ rtIdx - 1 ], m_rtBuffer[ rtIdx ], material, ( int ) BloomPasses.AnamorphicGlare );
 					}
 
 					rtIdx += 1;
@@ -471,29 +471,29 @@ namespace AmplifyBloom
 			{
 				material.SetVector( AmplifyUtils.AnamorphicGlareWeightsStr[ i ], m_amplifyGlareCache.AverageWeight );
 				int idx = ( i + 1 ) * currPassCount - 1;
-				material.SetTexture( AmplifyUtils.AnamorphicRTS[ i ], _rtBuffer[ idx ] );
+				material.SetTexture( AmplifyUtils.AnamorphicRTS[ i ], m_rtBuffer[ idx ] );
 			}
 
 			int passId = ( int ) BloomPasses.WeightedAddPS1 + starDef.StarlinesCount - 1;
 			dest.DiscardContents();
-			Graphics.Blit( _rtBuffer[ 0 ], dest, material, passId );
+			Graphics.Blit( m_rtBuffer[ 0 ], dest, material, passId );
 
 			//RELEASE RT's
-			for ( rtIdx = 0; rtIdx < _rtBuffer.Length; rtIdx++ )
+			for ( rtIdx = 0; rtIdx < m_rtBuffer.Length; rtIdx++ )
 			{
-				AmplifyUtils.ReleaseTempRenderTarget( _rtBuffer[ rtIdx ] );
-				_rtBuffer[ rtIdx ] = null;
+				AmplifyUtils.ReleaseTempRenderTarget( m_rtBuffer[ rtIdx ] );
+				m_rtBuffer[ rtIdx ] = null;
 			}
 		}
 
 		public GlareLibType CurrentGlare
 		{
-			get { return m_currentGlareType; }
+			get => m_currentGlareType;
 			set
 			{
 				if ( m_currentGlareType != value )
 				{
-					m_currentGlareType = value;
+					m_currentGlareType = ( GlareLibType )Mathf.Clamp( ( int )value, 0, ( int )GlareLibType.Custom );
 					m_currentGlareIdx = ( int ) value;
 					m_isDirty = true;
 				}
@@ -502,17 +502,17 @@ namespace AmplifyBloom
 
 		public int GlareMaxPassCount
 		{
-			get { return m_glareMaxPassCount; }
+			get => m_glareMaxPassCount;
 			set
 			{
-				m_glareMaxPassCount = value;
+				m_glareMaxPassCount = Mathf.Clamp( value, 0, AmplifyGlare.MaxPasses );
 				m_isDirty = true;
 			}
 		}
 
 		public float PerPassDisplacement
 		{
-			get { return m_perPassDisplacement; }
+			get => m_perPassDisplacement;
 			set
 			{
 				m_perPassDisplacement = value;
@@ -522,17 +522,17 @@ namespace AmplifyBloom
 
 		public float Intensity
 		{
-			get { return m_intensity; }
+			get => m_intensity;
 			set
 			{
-				m_intensity = value < 0 ? 0 : value;
+				m_intensity = Mathf.Max( 0f, value );
 				m_isDirty = true;
 			}
 		}
 
 		public Color OverallTint
 		{
-			get { return _overallTint; }
+			get => _overallTint;
 			set
 			{
 				_overallTint = value;
@@ -542,13 +542,13 @@ namespace AmplifyBloom
 
 		public bool ApplyLensGlare
 		{
-			get { return m_applyGlare; }
-			set { m_applyGlare = value; }
+			get => m_applyGlare;
+			set => m_applyGlare = value;
 		}
 
 		public UnityEngine.Gradient CromaticColorGradient
 		{
-			get { return m_cromaticAberrationGrad; }
+			get => m_cromaticAberrationGrad;
 			set
 			{
 				m_cromaticAberrationGrad = value;
@@ -558,7 +558,7 @@ namespace AmplifyBloom
 
 		public float OverallStreakScale
 		{
-			get { return m_overallStreakScale; }
+			get => m_overallStreakScale;
 			set
 			{
 				m_overallStreakScale = value;
@@ -568,36 +568,19 @@ namespace AmplifyBloom
 
 		public GlareDefData[] CustomGlareDef
 		{
-			get
-			{
-				return m_customGlareDef;
-			}
-			set
-			{
-				m_customGlareDef = value;
-			}
+			get => m_customGlareDef;
+			set => m_customGlareDef = value;
 		}
 
 		public int CustomGlareDefIdx
 		{
-			get
-			{
-				return m_customGlareDefIdx;
-			}
-
-			set
-			{
-				m_customGlareDefIdx = value;
-			}
+			get => m_customGlareDefIdx;
+			set => m_customGlareDefIdx = value;
 		}
 
 		public int CustomGlareDefAmount
 		{
-			get
-			{
-				return m_customGlareDefAmount;
-			}
-
+			get => m_customGlareDefAmount;
 			set
 			{
 				if ( value == m_customGlareDefAmount )

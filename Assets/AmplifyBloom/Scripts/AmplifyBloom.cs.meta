@@ -6,8 +6,9 @@ MonoImporter:
   defaultReferences:
   - m_maskTexture: {instanceID: 0}
   - m_targetTexture: {instanceID: 0}
-  - m_lensDirtTexture: {instanceID: 0}
-  - m_lensStardurstTex: {instanceID: 0}
+  - m_lensDirtTexture: {fileID: 2800000, guid: 7825356d1f1778140ad12b5dfe6b4d41, type: 3}
+  - m_lensStardurstTex: {fileID: 2800000, guid: c2216a0fed1c98742b826a85db28021c,
+      type: 3}
   - m_bloomShader: {fileID: 4800000, guid: 4f39db24ff9a0484c9ea5c2fa1c86c1b, type: 3}
   - m_finalCompositionShader: {fileID: 4800000, guid: 6e4f40cfbd18b3b469b5079288cea652,
       type: 3}

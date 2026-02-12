@@ -62,9 +62,9 @@ namespace AmplifyBloom
 			HighPrecision.isOn = m_amplifyBloom.HighPrecision;
 			UpscaleType.isOn = (m_amplifyBloom.UpscaleQuality == UpscaleQualityEnum.Realistic);
 			TemporalFilter.isOn = m_amplifyBloom.TemporalFilteringActive;
-			BokehToggle.isOn = m_amplifyBloom.BokehFilterInstance.ApplyBokeh;
-			LensFlareToggle.isOn = m_amplifyBloom.LensFlareInstance.ApplyLensFlare;
-			LensGlareToggle.isOn = m_amplifyBloom.LensGlareInstance.ApplyLensGlare;
+			BokehToggle.isOn = m_amplifyBloom.BokehFilter.ApplyBokeh;
+			LensFlareToggle.isOn = m_amplifyBloom.LensFlare.ApplyLensFlare;
+			LensGlareToggle.isOn = m_amplifyBloom.LensGlare.ApplyLensGlare;
 			LensDirtToggle.isOn = m_amplifyBloom.ApplyLensDirt;
 			LensStarburstToggle.isOn = m_amplifyBloom.ApplyLensStardurst;
 
@@ -160,15 +160,15 @@ namespace AmplifyBloom
 
 		public void OnBokehFilterToggle( bool value )
 		{
-			m_amplifyBloom.BokehFilterInstance.ApplyBokeh = BokehToggle.isOn;
+			m_amplifyBloom.BokehFilter.ApplyBokeh = BokehToggle.isOn;
 		}
 		public void OnLensFlareToggle( bool value )
 		{
-			m_amplifyBloom.LensFlareInstance.ApplyLensFlare = LensFlareToggle.isOn;
+			m_amplifyBloom.LensFlare.ApplyLensFlare = LensFlareToggle.isOn;
 		}
 		public void OnLensGlareToggle( bool value )
 		{
-			m_amplifyBloom.LensGlareInstance.ApplyLensGlare = LensGlareToggle.isOn;
+			m_amplifyBloom.LensGlare.ApplyLensGlare = LensGlareToggle.isOn;
 		}
 		public void OnLensDirtToggle( bool value )
 		{
@@ -254,17 +254,17 @@ namespace AmplifyBloom
 			{
 				if ( Input.GetKeyDown( KeyCode.Alpha2 ) )
 				{
-					m_amplifyBloom.BokehFilterInstance.ApplyBokeh = BokehToggle.isOn = !BokehToggle.isOn;
+					m_amplifyBloom.BokehFilter.ApplyBokeh = BokehToggle.isOn = !BokehToggle.isOn;
 				}
 
 				if ( Input.GetKeyDown( KeyCode.Alpha3 ) )
 				{
-					m_amplifyBloom.LensFlareInstance.ApplyLensFlare = LensFlareToggle.isOn = !LensFlareToggle.isOn;
+					m_amplifyBloom.LensFlare.ApplyLensFlare = LensFlareToggle.isOn = !LensFlareToggle.isOn;
 				}
 
 				if ( Input.GetKeyDown( KeyCode.Alpha4 ) )
 				{
-					m_amplifyBloom.LensGlareInstance.ApplyLensGlare = LensGlareToggle.isOn = !LensGlareToggle.isOn;
+					m_amplifyBloom.LensGlare.ApplyLensGlare = LensGlareToggle.isOn = !LensGlareToggle.isOn;
 				}
 
 				if ( Input.GetKeyDown( KeyCode.Alpha5 ) )

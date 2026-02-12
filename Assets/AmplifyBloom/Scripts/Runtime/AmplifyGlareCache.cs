@@ -1,19 +1,16 @@
 // Amplify Bloom - Advanced Bloom Post-Effect for Unity
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
-using UnityEngine;
 using System;
+using UnityEngine;
 
 namespace AmplifyBloom
 {
 	[Serializable]
 	public class AmplifyPassCache
 	{
-		[SerializeField]
-		internal Vector4[] Offsets;
-
-		[SerializeField]
-		internal Vector4[] Weights;
+		[SerializeField] internal Vector4[] Offsets;
+		[SerializeField] internal Vector4[] Weights;
 
 		public AmplifyPassCache()
 		{
@@ -31,8 +28,8 @@ namespace AmplifyBloom
 	[Serializable]
 	public class AmplifyStarlineCache
 	{
-		[SerializeField]
-		internal AmplifyPassCache[] Passes;
+		[SerializeField] internal AmplifyPassCache[] Passes;
+
 		public AmplifyStarlineCache()
 		{
 			Passes = new AmplifyPassCache[ AmplifyGlare.MaxPasses ];
@@ -55,26 +52,13 @@ namespace AmplifyBloom
 	[Serializable]
 	public class AmplifyGlareCache
 	{
-		[SerializeField]
-		internal AmplifyStarlineCache[] Starlines;
-
-		[SerializeField]
-		internal Vector4 AverageWeight;
-
-		[SerializeField]
-		internal Vector4[,] CromaticAberrationMat;
-
-		[SerializeField]
-		internal int TotalRT;
-
-		[SerializeField]
-		internal GlareDefData GlareDef;
-
-		[SerializeField]
-		internal StarDefData StarDef;
-
-		[SerializeField]
-		internal int CurrentPassCount;
+		[SerializeField] internal AmplifyStarlineCache[] Starlines;
+		[SerializeField] internal Vector4 AverageWeight;
+		[SerializeField] internal Vector4[,] CromaticAberrationMat;
+		[SerializeField] internal int TotalRT;
+		[SerializeField] internal GlareDefData GlareDef;
+		[SerializeField] internal StarDefData StarDef;
+		[SerializeField] internal int CurrentPassCount;
 
 		public AmplifyGlareCache()
 		{

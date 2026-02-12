@@ -1,8 +1,9 @@
 ﻿// Amplify Bloom - Advanced Bloom Post-Effect for Unity
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
-using UnityEngine;
 using System;
+using UnityEngine;
+
 namespace AmplifyBloom
 {
 	// Star generation
@@ -11,14 +12,10 @@ namespace AmplifyBloom
 	[Serializable]
 	public class StarLineData
 	{
-		[SerializeField]
-		internal int PassCount;
-		[SerializeField]
-		internal float SampleLength;
-		[SerializeField]
-		internal float Attenuation;
-		[SerializeField]
-		internal float Inclination;
+		[SerializeField] internal int PassCount;
+		[SerializeField] internal float SampleLength;
+		[SerializeField] internal float Attenuation;
+		[SerializeField] internal float Inclination;
 	};
 
 	// Star form library
@@ -35,30 +32,19 @@ namespace AmplifyBloom
 	[Serializable]
 	public class StarDefData
 	{
-		[SerializeField]
-		private StarLibType m_starType = StarLibType.Cross;
-		[SerializeField]
-		private string m_starName = string.Empty;
-		[SerializeField]
-		private int m_starlinesCount = 2;
-		[SerializeField]
-		private int m_passCount = 4;
-		[SerializeField]
-		private float m_sampleLength = 1;
-		[SerializeField]
-		private float m_attenuation = 0.85f;
-		[SerializeField]
-		private float m_inclination = 0;
-		[SerializeField]
-		private float m_rotation = 0;
-		[SerializeField]
-		private StarLineData[] m_starLinesArr = null;
-		[SerializeField]
-		private float m_customIncrement = 90;
-		[SerializeField]
-		private float m_longAttenuation = 0;
+		[SerializeField] private StarLibType m_starType = StarLibType.Cross;
+		[SerializeField] private string m_starName = string.Empty;
+		[SerializeField] private int m_starlinesCount = 2;
+		[SerializeField] private int m_passCount = 4;
+		[SerializeField] private float m_sampleLength = 1;
+		[SerializeField] private float m_attenuation = 0.85f;
+		[SerializeField] private float m_inclination = 0;
+		[SerializeField] private float m_rotation = 0;
+		[SerializeField] private StarLineData[] m_starLinesArr = null;
+		[SerializeField] private float m_customIncrement = 90;
+		[SerializeField] private float m_longAttenuation = 0;
 
-		public StarDefData(){}
+		public StarDefData() { }
 
 		public void Destroy()
 		{
@@ -109,34 +95,19 @@ namespace AmplifyBloom
 
 		public StarLibType StarType
 		{
-			get
-			{
-				return m_starType;
-			}
-			set
-			{
-				m_starType = value;
-			}
+			get => m_starType;
+			set => m_starType = value;
 		}
 
 		public string StarName
 		{
-			get
-			{
-				return m_starName;
-			}
-			set
-			{
-				m_starName = value;
-			}
+			get => m_starName;
+			set => m_starName = value;
 		}
 
 		public int StarlinesCount
 		{
-			get
-			{
-				return m_starlinesCount;
-			}
+			get => m_starlinesCount;
 			set
 			{
 				m_starlinesCount = value;
@@ -144,14 +115,9 @@ namespace AmplifyBloom
 			}
 		}
 
-
-
 		public int PassCount
 		{
-			get
-			{
-				return m_passCount;
-			}
+			get => m_passCount;
 			set
 			{
 				m_passCount = value;
@@ -159,13 +125,9 @@ namespace AmplifyBloom
 			}
 		}
 
-
 		public float SampleLength
 		{
-			get
-			{
-				return m_sampleLength;
-			}
+			get => m_sampleLength;
 			set
 			{
 				m_sampleLength = value;
@@ -173,13 +135,9 @@ namespace AmplifyBloom
 			}
 		}
 
-
 		public float Attenuation
 		{
-			get
-			{
-				return m_attenuation;
-			}
+			get => m_attenuation;
 			set
 			{
 				m_attenuation = value;
@@ -189,43 +147,28 @@ namespace AmplifyBloom
 
 		public float Inclination
 		{
-			get
-			{
-				return m_inclination;
-			}
+			get => m_inclination;
 			set
 			{
 				m_inclination = value;
 				CalculateStarData();
 			}
 		}
+
 		public float CameraRotInfluence
 		{
-			get
-			{
-				return m_rotation;
-			}
-			set
-			{
-				m_rotation = value;
-			}
+			get => m_rotation;
+			set => m_rotation = value;
 		}
 
 		public StarLineData[] StarLinesArr
 		{
-			get
-			{
-				return m_starLinesArr;
-			}
-
+			get => m_starLinesArr;
 		}
 
 		public float CustomIncrement
 		{
-			get
-			{
-				return m_customIncrement;
-			}
+			get => m_customIncrement;
 			set
 			{
 				m_customIncrement = value;
@@ -235,10 +178,7 @@ namespace AmplifyBloom
 
 		public float LongAttenuation
 		{
-			get
-			{
-				return m_longAttenuation;
-			}
+			get => m_longAttenuation;
 			set
 			{
 				m_longAttenuation = value;

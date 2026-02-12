@@ -1,8 +1,8 @@
 // Amplify Bloom - Advanced Bloom Post-Effect for Unity
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AmplifyBloom
 {
@@ -53,82 +53,107 @@ namespace AmplifyBloom
 		public static RenderTextureReadWrite CurrentReadWriteMode = RenderTextureReadWrite.sRGB;
 		public static bool IsInitialized = false;
 
-		private static List<RenderTexture> _allocatedRT = new List<RenderTexture>();
+		private static List<RenderTexture> s_allocatedRT = new List<RenderTexture>();
+
 		public static void InitializeIds()
 		{
 			IsInitialized = true;
 			MaskTextureId = Shader.PropertyToID( "_MaskTex" );
 
-			MipResultsRTS = new int[]{  Shader.PropertyToID( "_MipResultsRTS0" ),
-										Shader.PropertyToID( "_MipResultsRTS1" ),
-										Shader.PropertyToID( "_MipResultsRTS2" ),
-										Shader.PropertyToID( "_MipResultsRTS3" ),
-										Shader.PropertyToID( "_MipResultsRTS4" ),
-										Shader.PropertyToID( "_MipResultsRTS5" )};
+			MipResultsRTS = new int []
+			{
+				Shader.PropertyToID( "_MipResultsRTS0" ),
+				Shader.PropertyToID( "_MipResultsRTS1" ),
+				Shader.PropertyToID( "_MipResultsRTS2" ),
+				Shader.PropertyToID( "_MipResultsRTS3" ),
+				Shader.PropertyToID( "_MipResultsRTS4" ),
+				Shader.PropertyToID( "_MipResultsRTS5" )
+			};
 
-			AnamorphicRTS = new int[]{  Shader.PropertyToID( "_AnamorphicRTS0" ),
-										Shader.PropertyToID( "_AnamorphicRTS1" ),
-										Shader.PropertyToID( "_AnamorphicRTS2" ),
-										Shader.PropertyToID( "_AnamorphicRTS3" ),
-										Shader.PropertyToID( "_AnamorphicRTS4" ),
-										Shader.PropertyToID( "_AnamorphicRTS5" ),
-										Shader.PropertyToID( "_AnamorphicRTS6" ),
-										Shader.PropertyToID( "_AnamorphicRTS7" )};
+			AnamorphicRTS = new int []
+			{
+				Shader.PropertyToID( "_AnamorphicRTS0" ),
+				Shader.PropertyToID( "_AnamorphicRTS1" ),
+				Shader.PropertyToID( "_AnamorphicRTS2" ),
+				Shader.PropertyToID( "_AnamorphicRTS3" ),
+				Shader.PropertyToID( "_AnamorphicRTS4" ),
+				Shader.PropertyToID( "_AnamorphicRTS5" ),
+				Shader.PropertyToID( "_AnamorphicRTS6" ),
+				Shader.PropertyToID( "_AnamorphicRTS7" )
+			};
 
-			AnamorphicGlareWeightsMatStr = new int[]{   Shader.PropertyToID( "_AnamorphicGlareWeightsMat0" ),
-														Shader.PropertyToID( "_AnamorphicGlareWeightsMat1" ),
-														Shader.PropertyToID( "_AnamorphicGlareWeightsMat2" ),
-														Shader.PropertyToID( "_AnamorphicGlareWeightsMat3" )};
+			AnamorphicGlareWeightsMatStr = new int[]
+			{
+				Shader.PropertyToID( "_AnamorphicGlareWeightsMat0" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeightsMat1" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeightsMat2" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeightsMat3" )
+			};
 
 
-			AnamorphicGlareOffsetsMatStr = new int[]{   Shader.PropertyToID( "_AnamorphicGlareOffsetsMat0" ),
-														Shader.PropertyToID( "_AnamorphicGlareOffsetsMat1" ),
-														Shader.PropertyToID( "_AnamorphicGlareOffsetsMat2" ),
-														Shader.PropertyToID( "_AnamorphicGlareOffsetsMat3" )};
+			AnamorphicGlareOffsetsMatStr = new int[]
+			{
+				Shader.PropertyToID( "_AnamorphicGlareOffsetsMat0" ),
+				Shader.PropertyToID( "_AnamorphicGlareOffsetsMat1" ),
+				Shader.PropertyToID( "_AnamorphicGlareOffsetsMat2" ),
+				Shader.PropertyToID( "_AnamorphicGlareOffsetsMat3" )
+			};
 
-			AnamorphicGlareWeightsStr = new int[]{  Shader.PropertyToID( "_AnamorphicGlareWeights0" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights1" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights2" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights3" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights4" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights5" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights6" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights7" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights8" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights9" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights10" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights11" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights12" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights13" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights14" ),
-													Shader.PropertyToID( "_AnamorphicGlareWeights15" )};
+			AnamorphicGlareWeightsStr = new int[]
+			{
+				Shader.PropertyToID( "_AnamorphicGlareWeights0" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights1" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights2" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights3" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights4" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights5" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights6" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights7" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights8" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights9" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights10" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights11" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights12" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights13" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights14" ),
+				Shader.PropertyToID( "_AnamorphicGlareWeights15" )
+			};
 
-			UpscaleWeightsStr = new int[]{          Shader.PropertyToID( "_UpscaleWeights0" ),
-													Shader.PropertyToID( "_UpscaleWeights1" ),
-													Shader.PropertyToID( "_UpscaleWeights2" ),
-													Shader.PropertyToID( "_UpscaleWeights3" ),
-													Shader.PropertyToID( "_UpscaleWeights4" ),
-													Shader.PropertyToID( "_UpscaleWeights5" ),
-													Shader.PropertyToID( "_UpscaleWeights6" ),
-													Shader.PropertyToID( "_UpscaleWeights7" )};
+			UpscaleWeightsStr = new int[]
+			{
+				Shader.PropertyToID( "_UpscaleWeights0" ),
+				Shader.PropertyToID( "_UpscaleWeights1" ),
+				Shader.PropertyToID( "_UpscaleWeights2" ),
+				Shader.PropertyToID( "_UpscaleWeights3" ),
+				Shader.PropertyToID( "_UpscaleWeights4" ),
+				Shader.PropertyToID( "_UpscaleWeights5" ),
+				Shader.PropertyToID( "_UpscaleWeights6" ),
+				Shader.PropertyToID( "_UpscaleWeights7" )
+			};
 
-			LensDirtWeightsStr = new int[]{		    Shader.PropertyToID( "_LensDirtWeights0" ),
-													Shader.PropertyToID( "_LensDirtWeights1" ),
-													Shader.PropertyToID( "_LensDirtWeights2" ),
-													Shader.PropertyToID( "_LensDirtWeights3" ),
-													Shader.PropertyToID( "_LensDirtWeights4" ),
-													Shader.PropertyToID( "_LensDirtWeights5" ),
-													Shader.PropertyToID( "_LensDirtWeights6" ),
-													Shader.PropertyToID( "_LensDirtWeights7" )};
+			LensDirtWeightsStr = new int[]
+			{
+				Shader.PropertyToID( "_LensDirtWeights0" ),
+				Shader.PropertyToID( "_LensDirtWeights1" ),
+				Shader.PropertyToID( "_LensDirtWeights2" ),
+				Shader.PropertyToID( "_LensDirtWeights3" ),
+				Shader.PropertyToID( "_LensDirtWeights4" ),
+				Shader.PropertyToID( "_LensDirtWeights5" ),
+				Shader.PropertyToID( "_LensDirtWeights6" ),
+				Shader.PropertyToID( "_LensDirtWeights7" )
+			};
 
-			LensStarburstWeightsStr= new int[]{     Shader.PropertyToID( "_LensStarburstWeights0" ),
-													Shader.PropertyToID( "_LensStarburstWeights1" ),
-													Shader.PropertyToID( "_LensStarburstWeights2" ),
-													Shader.PropertyToID( "_LensStarburstWeights3" ),
-													Shader.PropertyToID( "_LensStarburstWeights4" ),
-													Shader.PropertyToID( "_LensStarburstWeights5" ),
-													Shader.PropertyToID( "_LensStarburstWeights6" ),
-													Shader.PropertyToID( "_LensStarburstWeights7" )};
+			LensStarburstWeightsStr= new int[]
+			{
+				Shader.PropertyToID( "_LensStarburstWeights0" ),
+				Shader.PropertyToID( "_LensStarburstWeights1" ),
+				Shader.PropertyToID( "_LensStarburstWeights2" ),
+				Shader.PropertyToID( "_LensStarburstWeights3" ),
+				Shader.PropertyToID( "_LensStarburstWeights4" ),
+				Shader.PropertyToID( "_LensStarburstWeights5" ),
+				Shader.PropertyToID( "_LensStarburstWeights6" ),
+				Shader.PropertyToID( "_LensStarburstWeights7" )
+			};
 
 			BloomRangeId = Shader.PropertyToID( "_BloomRange" );
 			LensDirtStrengthId = Shader.PropertyToID( "_LensDirtStrength" );
@@ -166,13 +191,13 @@ namespace AmplifyBloom
 			RenderTexture newRT = RenderTexture.GetTemporary( width, height, 0, CurrentRTFormat , CurrentReadWriteMode );
 			newRT.filterMode = CurrentFilterMode;
 			newRT.wrapMode = CurrentWrapMode;
-			_allocatedRT.Add( newRT );
+			s_allocatedRT.Add( newRT );
 			return newRT;
 		}
 
 		public static void ReleaseTempRenderTarget( RenderTexture renderTarget )
 		{
-			if ( renderTarget != null && _allocatedRT.Remove( renderTarget ) )
+			if ( renderTarget != null && s_allocatedRT.Remove( renderTarget ) )
 			{
 				renderTarget.DiscardContents();
 				RenderTexture.ReleaseTemporary( renderTarget );
@@ -181,12 +206,12 @@ namespace AmplifyBloom
 
 		public static void ReleaseAllRT()
 		{
-			for ( int i = 0; i < _allocatedRT.Count; i++ )
+			for ( int i = 0; i < s_allocatedRT.Count; i++ )
 			{
-				_allocatedRT[ i ].DiscardContents();
-				RenderTexture.ReleaseTemporary( _allocatedRT[ i ] );
+				s_allocatedRT[ i ].DiscardContents();
+				RenderTexture.ReleaseTemporary( s_allocatedRT[ i ] );
 			}
-			_allocatedRT.Clear();
+			s_allocatedRT.Clear();
 		}
 
 		public static void EnsureKeywordEnabled( Material mat, string keyword, bool state )
@@ -194,9 +219,13 @@ namespace AmplifyBloom
 			if ( mat != null )
 			{
 				if ( state && !mat.IsKeywordEnabled( keyword ) )
+				{
 					mat.EnableKeyword( keyword );
+				}
 				else if ( !state && mat.IsKeywordEnabled( keyword ) )
+				{
 					mat.DisableKeyword( keyword );
+				}
 			}
 		}
 	}

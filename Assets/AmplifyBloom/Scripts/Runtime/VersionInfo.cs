@@ -11,7 +11,7 @@ namespace AmplifyBloom
 	{
 		public const byte Major = 1;
 		public const byte Minor = 3;
-		public const byte Release = 1;
+		public const byte Release = 2;
 		public const byte Revision = 0;
 
 		public static string StaticToString()
